@@ -1,5 +1,7 @@
 package Main;
 
+import Characters.Warrior;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,19 +10,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GamePanel extends JPanel {
-    final int tileSize = 16, scale = 3;
+    public final int tileSize =16, scale = 3;
     final int finalTileSize = tileSize * scale; //48 x 48 screen
     final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = finalTileSize * screenTileWidth, boardHeight = finalTileSize * screenTileHeight; // 1056px x 576px
 
+
     PlayerInputs pI= new PlayerInputs();
     private Timer gameTimer;
 
-
-    //Temporary player settings
-    int playerX= 100, playerY=100, playerSpeed=1;
-
-
+    Warrior warrior= new Warrior(this, pI);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -39,6 +38,7 @@ public class GamePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                     updateGame();
                     repaint();
+                updateFPS();
             }
         });
         gameTimer.start();
@@ -46,32 +46,22 @@ public class GamePanel extends JPanel {
 
 
     private void updateGame() {
-        movePlayer();
-    }
+        warrior.update();
 
-    private void movePlayer(){
-        if (pI.upPressed){
-            playerY-= playerSpeed;
-        } else if (pI.downPressed) {
-            playerY+= playerSpeed;
-            playerY= playerY+playerSpeed;
-        } else if (pI.leftPressed) {
-            playerX-= playerSpeed;
-            playerX= playerX-playerSpeed;
-        } else if (pI.rightPressed) {
-            playerX+= playerSpeed;
-            playerX= playerX+playerSpeed;
-        }
     }
 
 
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
+    //Temporary player settings
 
-        Graphics2D g2= (Graphics2D) g;
-        g2.fillRect(playerX, playerY, tileSize, tileSize);
-        g2.dispose();
-    }
+//    public void paintComponent(Graphics g){
+//        super.paintComponent(g);
+//
+//        Graphics2D g2= (Graphics2D) g;
+//        g2.setColor(Color.RED);
+//        Rectangle hitbox = warrior.getHitbox();
+//        g2.draw(hitbox);
+//        g2.dispose();
+//    }
 
 
     public static class frameWindowListener extends WindowAdapter {
@@ -98,4 +88,22 @@ public class GamePanel extends JPanel {
             }
         }
     }
+
+    private long lastTimeCheck = System.nanoTime();
+    private int frameCount = 0;
+    private void updateFPS() {
+        long currentTime = System.nanoTime();
+        frameCount++;
+
+        // If more than a second has passed, print the FPS and reset
+        if (currentTime - lastTimeCheck >= 1000000000) { // If one second has passed
+            System.out.println("FPS: " + frameCount);
+            frameCount = 0; // Reset the frame count
+            lastTimeCheck = currentTime; // Reset the last time check
+        }
+
+        // Make sure to call repaint() or any necessary updates at the end of the update loop
+        repaint();
+    }
+
 }
