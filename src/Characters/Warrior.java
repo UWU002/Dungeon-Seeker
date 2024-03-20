@@ -2,33 +2,30 @@ package Characters;
 
 import Main.GamePanel;
 import Main.PlayerInputs;
+import Tiles.map;
 
 import javax.swing.*;
 import java.awt.*;
 
+
 public class Warrior extends Entity {
-    private GamePanel gp;
-    private PlayerInputs pI;
     private JLabel warriorLabel;
 
 
-
-    public Warrior(GamePanel gp, PlayerInputs pI) {
-        this.gp = gp;
-        this.pI = pI;
-        warriorLabel= new JLabel();
+    public Warrior(GamePanel gp, PlayerInputs pI, map gameMap) {
+        super(gp,pI,gameMap);
+        warriorLabel = new JLabel();
         loadImages();
         setDefaultValues();
         gp.add(warriorLabel);
-        warriorLabel.setSize(gp.tileSize*2, gp.tileSize*2);
+        warriorLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
+        hitbox = new Rectangle(x + 10, y + 10, gp.originalTileSize, gp.originalTileSize);
     }
 
-    public Rectangle getHitbox() {
-        return new Rectangle(x+10, y, gp.tileSize, gp.tileSize);
-    }
+
     public void setDefaultValues() {
-        x = 100;
-        y = 100;
+        x = 50;
+        y = 50;
         speed = 2;
         direction = "idle";
         updateLabel();
@@ -40,49 +37,77 @@ public class Warrior extends Entity {
     }
 
     private void movePlayer() {
+        int newX=x, newY=y;
+
         if (pI.upPressed && !pI.rightPressed && !pI.downPressed && !pI.leftPressed) {
-            direction="up";
-            y -= speed;
+            direction = "up";
+            newY -= speed;
         } else if (pI.downPressed && !pI.rightPressed && !pI.leftPressed && !pI.upPressed) {
-            direction="down";
-            y += speed;
+            direction = "down";
+            newY += speed;
         } else if (pI.leftPressed && !pI.rightPressed && !pI.downPressed && !pI.upPressed) {
-            direction="left";
-            x -= speed;
+            direction = "left";
+            newX -= speed;
         } else if (pI.rightPressed && !pI.upPressed && !pI.leftPressed && !pI.downPressed) {
-            direction="right";
-            x += speed;
+            direction = "right";
+            newX += speed;
         } else if (pI.upPressed && pI.rightPressed) {
-            direction="up";
-            x += speed;
-            y -= speed;
+            direction = "up";
+            newX += speed;
+            newY -= speed;
         } else if (pI.upPressed && pI.leftPressed) {
-            direction="up";
-            x -= speed;
-            y -= speed;
+            direction = "up";
+            newX -= speed;
+            newY -= speed;
         } else if (pI.downPressed && pI.rightPressed) {
-            direction="down";
-            x += speed;
-            y += speed;
+            direction = "down";
+            newX += speed;
+            newY += speed;
         } else if (pI.downPressed && pI.leftPressed) {
-            direction="down";
-            x -= speed;
-            y += speed;
-        } else if (!pI.rightPressed && !pI.downPressed && !pI.leftPressed && !pI.upPressed){
-            direction="idle";
+            direction = "down";
+            newX -= speed;
+            newY += speed;
+        } else if (!pI.rightPressed && !pI.downPressed) {
+            direction = "idle";
         }
+        if ("idle".equals(direction)) {
+            hitbox.setLocation(x+3, y+7);
+        }else {
+            hitbox.setLocation(x + 10, y + 10);
+        }
+
+        if (canMove(newX, newY)) {
+            x = newX;
+            y = newY;
+        } else {
+            direction = "idle";
+        }
+
+    }
+
+    private boolean canMove(int newX, int newY) {
+        Rectangle predictedHitbox = new Rectangle(newX + 10, newY + 10, hitbox.width, hitbox.height);
+
+        for (Rectangle wall : gameMap.getHitboxes()) {
+            if (predictedHitbox.intersects(wall)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void loadImages() {
         idle = new ImageIcon("src/images/warrior/warriorIdle.png");
-        down= new ImageIcon("src/images/warrior/warrior_down.gif");
-        left= new ImageIcon("src/images/warrior/warrior_left.gif");
-        right= new ImageIcon("src/images/warrior/warrior_right.gif");
-        up= new ImageIcon("src/images/warrior/warrior_up.gif");
+        down = new ImageIcon("src/images/warrior/warrior_down.gif");
+        left = new ImageIcon("src/images/warrior/warrior_left.gif");
+        right = new ImageIcon("src/images/warrior/warrior_right.gif");
+        up = new ImageIcon("src/images/warrior/warrior_up.gif");
 
     }
+
+
     private void updateLabel() {
-        switch (direction){
+        switch (direction) {
             case "up":
                 warriorLabel.setIcon(up);
                 break;
@@ -98,6 +123,11 @@ public class Warrior extends Entity {
             default:
                 warriorLabel.setIcon(idle);
         }
-        warriorLabel.setLocation(x,y);
+        warriorLabel.setLocation(x, y);
+    }
+
+
+    public JLabel getWarriorLabel() {
+        return warriorLabel;
     }
 }

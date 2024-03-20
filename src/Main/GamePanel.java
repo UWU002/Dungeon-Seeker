@@ -1,6 +1,7 @@
 package Main;
 
 import Characters.Warrior;
+import Tiles.map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,16 +11,22 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GamePanel extends JPanel {
-    public final int tileSize =16, scale = 3;
-    final int finalTileSize = tileSize * scale; //48 x 48 screen
-    final int screenTileWidth = 22, screenTileHeight = 12;
-    final int boardWidth = finalTileSize * screenTileWidth, boardHeight = finalTileSize * screenTileHeight; // 1056px x 576px
+    public final int originalTileSize =16, scale = 3;
+    public final int tileSize = originalTileSize * scale; //48 x 48 screen
+    public final int screenTileWidth = 22, screenTileHeight = 12;
+    final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
+
 
 
     PlayerInputs pI= new PlayerInputs();
     private Timer gameTimer;
 
-    Warrior warrior= new Warrior(this, pI);
+
+    map map= new map(this);
+    Warrior warrior= new Warrior(this, pI, map);
+
+
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -29,6 +36,8 @@ public class GamePanel extends JPanel {
         this.addKeyListener(pI);
         this.setFocusable(true);
         this.requestFocusInWindow();
+
+        this.setComponentZOrder(warrior.getWarriorLabel(), 0);
     }
 
     public void startGame() {
@@ -47,21 +56,21 @@ public class GamePanel extends JPanel {
 
     private void updateGame() {
         warrior.update();
-
     }
 
 
     //Temporary player settings
 
-//    public void paintComponent(Graphics g){
-//        super.paintComponent(g);
-//
-//        Graphics2D g2= (Graphics2D) g;
-//        g2.setColor(Color.RED);
-//        Rectangle hitbox = warrior.getHitbox();
-//        g2.draw(hitbox);
-//        g2.dispose();
-//    }
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        Graphics2D g2= (Graphics2D) g;
+        g2.setColor(Color.RED);
+        for (Rectangle rect : map.getHitboxes()){
+            g2.draw(rect);
+        }
+        Rectangle hitbox = warrior.getHitbox();
+        g2.draw(hitbox);
+    }
 
 
     public static class frameWindowListener extends WindowAdapter {
@@ -102,8 +111,6 @@ public class GamePanel extends JPanel {
             lastTimeCheck = currentTime; // Reset the last time check
         }
 
-        // Make sure to call repaint() or any necessary updates at the end of the update loop
-        repaint();
     }
 
 }
