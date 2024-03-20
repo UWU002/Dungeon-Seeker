@@ -1,6 +1,7 @@
 package Main;
 
 import Characters.Warrior;
+import Menus.GameHud;
 import Tiles.map;
 
 import javax.swing.*;
@@ -11,6 +12,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class GamePanel extends JPanel {
+
+    //Screen Size
     public final int originalTileSize =16, scale = 3;
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
@@ -24,21 +27,22 @@ public class GamePanel extends JPanel {
 
     map map= new map(this);
     Warrior warrior= new Warrior(this, pI, map);
-
+    GameHud gh= new GameHud(this);
 
 
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(boardWidth, boardHeight));
+        this.setPreferredSize(new Dimension(boardWidth, boardHeight+100));
         this.setBackground(Color.gray);
-        this.setSize(boardWidth, boardHeight);
+        this.setSize(boardWidth, boardHeight+100);
+        this.setBackground(Color.black);
         this.setLayout(null);
         this.addKeyListener(pI);
         this.setFocusable(true);
         this.requestFocusInWindow();
-
         this.setComponentZOrder(warrior.getWarriorLabel(), 0);
     }
+
 
     public void startGame() {
         int delay = 1000 / 60; //60 fps
@@ -56,6 +60,7 @@ public class GamePanel extends JPanel {
 
     private void updateGame() {
         warrior.update();
+        gh.update();
     }
 
 

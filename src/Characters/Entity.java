@@ -14,6 +14,7 @@ public class Entity {
     protected int speed;
     protected Rectangle hitbox;
     protected map gameMap;
+    protected int health;
 
     protected ImageIcon up, left, down, right, idle;
     protected String direction = "idle";
