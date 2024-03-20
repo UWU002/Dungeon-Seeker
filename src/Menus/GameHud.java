@@ -14,6 +14,9 @@ public class GameHud {
         this.gp = gp;
         characterHealth();
     }
+    public void update(){
+        updateLabel();
+    }
 
 
     private void characterHealth() {
@@ -24,11 +27,6 @@ public class GameHud {
         healthBar.setSize(200, 70);
         update();
     }
-
-    public void update(){
-        updateLabel();
-    }
-
     private void loadImages() {
         hp0 = new ImageIcon("src/images/MenuItems/0hpBar.png");
         hp10 = new ImageIcon("src/images/MenuItems/10hpBar.png");
@@ -38,7 +36,6 @@ public class GameHud {
         hp100 = new ImageIcon("src/images/MenuItems/100hpBar.png");
 
     }
-
     private void updateLabel() {
         if (hp<=100 && hp>90){
             healthBar.setIcon(hp100);
