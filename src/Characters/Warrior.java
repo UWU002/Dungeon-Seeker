@@ -71,11 +71,8 @@ public class Warrior extends Entity {
         } else if (!pI.rightPressed && !pI.downPressed) {
             direction = "idle";
         }
-        if ("idle".equals(direction)) {
-            hitbox.setLocation(x+3, y+7);
-        }else {
-            hitbox.setLocation(x + 10, y + 10);
-        }
+
+        hitbox.setLocation(x+10, y+10);
 
         if (canMove(newX, newY)) {
             x = newX;
