@@ -3,15 +3,17 @@ package Menus;
 import Main.GamePanel;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameHud {
     GamePanel gp;
-    private JLabel inventory, healthBar, gold;
+    private JLabel inventory, healthBar, gold,healthNum;
     private ImageIcon hp0,hp10,hp25,hp50,hp90,hp100; 
-    private int hp=100, coins=0, screenHeight= 12* 48;
+    private int hp, coins=0, screenHeight= 12* 48;
 
-    public GameHud(GamePanel gp) {
+    public GameHud(GamePanel gp, int characterHp) {
         this.gp = gp;
+        this.hp= characterHp;
         characterHealth();
     }
     public void update(){
@@ -25,6 +27,13 @@ public class GameHud {
         gp.add(healthBar);
         healthBar.setLocation(gp.tileSize*17, screenHeight+20);
         healthBar.setSize(200, 70);
+        healthNum= new JLabel();
+        healthNum.setLocation(905,550);
+        healthNum.setSize(100,100);
+        healthNum.setText(hp+"hp");
+        healthNum.setForeground(Color.red);
+        healthNum.setFont(new Font("Arial", Font.BOLD, 20));
+        gp.add(healthNum);
         update();
     }
     private void loadImages() {
@@ -37,6 +46,8 @@ public class GameHud {
 
     }
     private void updateLabel() {
+        healthNum.setText(hp+"hp");
+
         if (hp<=100 && hp>90){
             healthBar.setIcon(hp100);
         } else if (hp<=90 && hp>50) {
@@ -52,5 +63,11 @@ public class GameHud {
         }
     }
 
+    public int getHp() {
+        return hp;
+    }
 
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
 }

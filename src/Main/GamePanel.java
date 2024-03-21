@@ -1,5 +1,6 @@
 package Main;
 
+import Characters.Skeleton;
 import Characters.Warrior;
 import Menus.GameHud;
 import Tiles.map;
@@ -14,33 +15,34 @@ import java.awt.event.WindowEvent;
 public class GamePanel extends JPanel {
 
     //Screen Size
-    public final int originalTileSize =16, scale = 3;
+    public final int originalTileSize = 16, scale = 3;
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
 
 
-
-    PlayerInputs pI= new PlayerInputs();
+    PlayerInputs pI = new PlayerInputs();
     private Timer gameTimer;
 
 
-    map map= new map(this);
-    Warrior warrior= new Warrior(this, pI, map);
-    GameHud gh= new GameHud(this);
-
+    //temp object creation
+    map map = new map(this);
+    Warrior warrior = new Warrior(this, pI, map);
+    Skeleton skeleton = new Skeleton(this, pI, map);
+    GameHud gh = new GameHud(this, warrior.getHealth());
 
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(boardWidth, boardHeight+100));
+        this.setPreferredSize(new Dimension(boardWidth, boardHeight + 100));
         this.setBackground(Color.gray);
-        this.setSize(boardWidth, boardHeight+100);
+        this.setSize(boardWidth, boardHeight + 100);
         this.setBackground(Color.black);
         this.setLayout(null);
         this.addKeyListener(pI);
         this.setFocusable(true);
         this.requestFocusInWindow();
-        this.setComponentZOrder(warrior.getWarriorLabel(), 0);
+        this.setComponentZOrder(warrior.getWarriorLabel(), 1);
+        this.setComponentZOrder(skeleton.getSkeletonLabel(), 0);
     }
 
 
@@ -49,9 +51,10 @@ public class GamePanel extends JPanel {
         gameTimer = new Timer(delay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    updateGame();
-                    repaint();
+                updateGame();
+                repaint();
                 updateFPS();
+                System.out.println("update");
             }
         });
         gameTimer.start();
@@ -60,21 +63,33 @@ public class GamePanel extends JPanel {
 
     private void updateGame() {
         warrior.update();
+        skeleton.update();
         gh.update();
+        checkCollisions();
     }
-
+    boolean hasReacted = false;
+    private void checkCollisions() {
+        if (skeleton.getHitbox().intersects(warrior.getHitbox())) {
+            if (!hasReacted) {
+                gh.setHp(warrior.getHealth() - 10);
+                warrior.setHealth(warrior.getHealth() - 10);
+                hasReacted=true;
+            }
+        } else {
+            hasReacted=false;
+        }
+    }
 
     //Temporary player settings
 
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2= (Graphics2D) g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.RED);
-        for (Rectangle rect : map.getHitboxes()){
-            g2.draw(rect);
-        }
         Rectangle hitbox = warrior.getHitbox();
+        Rectangle hitbox2= skeleton.getHitbox();
         g2.draw(hitbox);
+        g2.draw(hitbox2);
     }
 
 
@@ -105,6 +120,7 @@ public class GamePanel extends JPanel {
 
     private long lastTimeCheck = System.nanoTime();
     private int frameCount = 0;
+
     private void updateFPS() {
         long currentTime = System.nanoTime();
         frameCount++;
@@ -115,7 +131,5 @@ public class GamePanel extends JPanel {
             frameCount = 0; // Reset the frame count
             lastTimeCheck = currentTime; // Reset the last time check
         }
-
     }
-
 }

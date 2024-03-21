@@ -25,7 +25,7 @@ public class Warrior extends Entity {
 
     public void setDefaultValues() {
         x = 50;
-        y = 50;
+        y = 600;
         health=100;
         speed = 2;
         direction = "idle";
@@ -131,4 +131,6 @@ public class Warrior extends Entity {
     public JLabel getWarriorLabel() {
         return warriorLabel;
     }
+
+
 }
