@@ -54,7 +54,6 @@ public class GamePanel extends JPanel {
                 updateGame();
                 repaint();
                 updateFPS();
-                System.out.println("update");
             }
         });
         gameTimer.start();

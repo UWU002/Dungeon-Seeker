@@ -27,7 +27,7 @@ public class Skeleton extends Entity {
         x = 100;
         y = 600;
         health = 100;
-        speed = 7;
+        speed = 2;
         updateLabel();
     }
 
@@ -99,7 +99,7 @@ public class Skeleton extends Entity {
     }
 
     private void loadImages() {
-        idle = new ImageIcon("src/images/skeleton/skeleton_idle.png");
+        idle = new ImageIcon("src/images/skeleton/idle_down.gif");
         down = new ImageIcon("src/images/skeleton/skeleton_down.gif");
         left = new ImageIcon("src/images/skeleton/skeleton_left.gif");
         right = new ImageIcon("src/images/skeleton/skeleton_right.gif");
