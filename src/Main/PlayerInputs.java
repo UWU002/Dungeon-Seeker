@@ -24,13 +24,11 @@ public class PlayerInputs extends KeyAdapter {
     @Override
     public void keyReleased(KeyEvent e) {
         int key= e.getKeyCode();
-
         switch (key){
             case KeyEvent.VK_W, KeyEvent.VK_UP -> upPressed=false;
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> leftPressed=false;
             case KeyEvent.VK_S, KeyEvent.VK_DOWN -> downPressed=false;
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> rightPressed=false;
-            case KeyEvent.VK_J, KeyEvent.VK_Z -> atacked=false;
         }
     }
 }

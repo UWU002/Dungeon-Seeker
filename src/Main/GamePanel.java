@@ -87,8 +87,10 @@ public class GamePanel extends JPanel {
         g2.setColor(Color.RED);
         Rectangle hitbox = warrior.getHitbox();
         Rectangle hitbox2= skeleton.getHitbox();
+        Rectangle atack= warrior.getAtackHitbox();
         g2.draw(hitbox);
         g2.draw(hitbox2);
+        g2.draw(atack);
     }
 
 

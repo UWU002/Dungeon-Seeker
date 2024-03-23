@@ -18,7 +18,6 @@ public class Skeleton extends Entity {
         setDefaultValues();
         gp.add(skeletonLabel);
         skeletonLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
-
         hitbox = new Rectangle(x + 5, y + 7, 20, 25);
     }
 

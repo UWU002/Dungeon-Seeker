@@ -12,12 +12,15 @@ public class Entity {
     protected PlayerInputs pI;
     protected int x, y;
     protected int speed;
-    protected Rectangle hitbox;
+    protected Rectangle hitbox, atackHitbox;
     protected map gameMap;
     protected int health;
+    protected Timer attackCooldownTimer;
+    protected Timer resetAttackFlagTimer;
+    protected boolean canAtack=true;
 
-    protected ImageIcon up, left, down, right, idle;
-    protected String direction = "idle";
+    protected ImageIcon up, left, down, right, idle, atackR, atackU, atackD, atackL, die;
+    protected String direction = "idle", prevDirection="right";
 
     public Entity(GamePanel gp, PlayerInputs pI, map gameMap){
         this.gp=gp;
@@ -28,6 +31,8 @@ public class Entity {
     public Rectangle getHitbox() {
         return hitbox;
     }
+
+    public Rectangle getAtackHitbox(){return atackHitbox;}
 
     public int getHealth() {
         return health;
