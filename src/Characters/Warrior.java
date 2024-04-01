@@ -9,8 +9,8 @@ import java.awt.*;
 
 
 public class Warrior extends Entity {
-    private JLabel warriorLabel;
-
+    private JLabel warriorLabel, atackEffect;
+    private ImageIcon effectR, effectU, effectL, effectD;
 
     public Warrior(GamePanel gp, PlayerInputs pI, map gameMap) {
         super(gp, pI, gameMap);
@@ -20,15 +20,22 @@ public class Warrior extends Entity {
         gp.add(warriorLabel);
         warriorLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
         hitbox = new Rectangle(x + 10, y + 10, gp.originalTileSize, gp.originalTileSize);
-        atackHitbox= new Rectangle(x+10000, y, gp.originalTileSize, gp.originalTileSize);
+        atackHitbox = new Rectangle(x + 10000, y, gp.originalTileSize, gp.originalTileSize);
+        atackEffect = new JLabel(new ImageIcon());
+        gp.add(atackEffect);
+        atackEffect.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
+
 
         resetAttackFlagTimer = new Timer(700, e -> {
             pI.atacked = false;
-            atackHitbox.setLocation(x+10000, y);
+            direction = "idle";
+            atackHitbox.setLocation(-10000, -10000);
+            atackEffect.setLocation(-10000, -10000);
             resetAttackFlagTimer.stop();
         });
         attackCooldownTimer = new Timer(1500, e -> {
             canAtack = true;
+            hasReacted = false;
             attackCooldownTimer.stop();
         });
     }
@@ -36,7 +43,7 @@ public class Warrior extends Entity {
 
     public void setDefaultValues() {
         x = 50;
-        y = 600;
+        y = 50;
         health = 100;
         speed = 2;
         direction = "idle";
@@ -52,42 +59,48 @@ public class Warrior extends Entity {
         int newX = x, newY = y;
 
         if (pI.upPressed) {
-            if (!pI.atacked) {
+            if (!resetAttackFlagTimer.isRunning()) {
                 direction = "up";
             }
             prevDirection = direction;
             newY -= speed;
         }
         if (pI.leftPressed) {
-            if (!pI.atacked) {
+            if (!resetAttackFlagTimer.isRunning()) {
                 direction = "left";
             }
             prevDirection = direction;
             newX -= speed;
         }
         if (pI.downPressed) {
-            if (!pI.atacked) {
+            if (!resetAttackFlagTimer.isRunning()) {
                 direction = "down";
             }
             prevDirection = direction;
             newY += speed;
         }
         if (pI.rightPressed) {
-            if (!pI.atacked) {direction = "right";}
+            if (!resetAttackFlagTimer.isRunning()) {
+                direction = "right";
+            }
             prevDirection = direction;
             newX += speed;
         }
         if (pI.atacked && canAtack) {
             canAtack = false;
+            direction = "atack";
+            atackHitbox.setLocation((int) hitbox.getX() + calculateAttackXOffset(), (int) hitbox.getY() + calculateAttackYOffset());
+            atackEffect.setLocation((int) atackHitbox.getX(), (int) atackHitbox.getY());
+            atackEffectDirection();
+            hasReacted = false;
             resetAttackFlagTimer.start();
             attackCooldownTimer.start();
-            direction = "atack";
+        } else {
+            atackHitbox.setLocation(-10000, -10000);
         }
         if (!pI.downPressed && !pI.rightPressed && !pI.leftPressed && !pI.upPressed && !pI.atacked) {
             direction = "idle";
         }
-
-        hitbox.setLocation(x + 10, y + 10);
 
         if (canMove(newX, newY)) {
             x = newX;
@@ -96,6 +109,46 @@ public class Warrior extends Entity {
             direction = "idle";
         }
 
+        hitbox.setLocation(x + 10, y + 10);
+        if (!resetAttackFlagTimer.isRunning()) {
+            atackHitbox.setLocation(-10000, -10000);
+        }
+
+
+    }
+
+    private void atackEffectDirection() {
+        if ("right".equalsIgnoreCase(prevDirection)) {
+            atackEffect.setLocation((int) atackHitbox.getX() - 5, (int) atackHitbox.getY()- 10);
+        } else if ("down".equalsIgnoreCase(prevDirection)) {
+            atackEffect.setLocation((int) atackHitbox.getX()- 15, (int) atackHitbox.getY() - 7);
+        } else if ("up".equalsIgnoreCase(prevDirection)) {
+            atackEffect.setLocation((int) atackHitbox.getX()- 15, (int) atackHitbox.getY() - 10);
+        } else {
+            atackEffect.setLocation((int) atackHitbox.getX() - 10, (int) atackHitbox.getY()- 10);
+        }
+    }
+
+    private int calculateAttackXOffset() {
+        switch (prevDirection) {
+            case "right":
+                return 15;
+            case "left":
+                return -15;
+            default:
+                return 0;
+        }
+    }
+
+    private int calculateAttackYOffset() {
+        switch (prevDirection) {
+            case "up":
+                return -15;
+            case "down":
+                return 15;
+            default:
+                return 0;
+        }
     }
 
     private boolean canMove(int newX, int newY) {
@@ -119,7 +172,11 @@ public class Warrior extends Entity {
         atackD = new ImageIcon("src/images/warrior/warrior_atack_down.gif");
         atackU = new ImageIcon("src/images/warrior/warrior_atack_up.gif");
         atackL = new ImageIcon("src/images/warrior/warrior_atack_left.gif");
-        die = new ImageIcon("src/images/warrior/warrior_die.gif");
+        effectU = new ImageIcon("src/images/warrior/atackEffect_up.gif");
+        effectD = new ImageIcon("src/images/warrior/atackEffect_down.gif");
+        effectL = new ImageIcon("src/images/warrior/atackEffect_left.gif");
+        effectR = new ImageIcon("src/images/warrior/atackEffect_right.gif");
+        die = new ImageIcon("src/images/warrior/warrior_die.gif.gif");
     }
 
 
@@ -142,6 +199,7 @@ public class Warrior extends Entity {
                 break;
             default:
                 warriorLabel.setIcon(idle);
+                break;
         }
         warriorLabel.setLocation(x, y);
     }
@@ -150,20 +208,31 @@ public class Warrior extends Entity {
         switch (prevDirection) {
             case "up":
                 warriorLabel.setIcon(atackU);
-                atackHitbox.setLocation((int)hitbox.getX(),(int) hitbox.getY()+5);
+                atackEffect.setIcon(effectU);
                 break;
             case "down":
                 warriorLabel.setIcon(atackD);
-                atackHitbox.setLocation((int)hitbox.getX(),(int) hitbox.getY()-5);
+                atackEffect.setIcon(effectD);
                 break;
             case "right":
                 warriorLabel.setIcon(atackR);
-                atackHitbox.setLocation((int)hitbox.getX()+5,(int) hitbox.getY());
+                atackEffect.setIcon(effectR);
                 break;
             case "left":
                 warriorLabel.setIcon(atackL);
-                atackHitbox.setLocation((int)hitbox.getX()-10,(int) hitbox.getY());
+                atackEffect.setIcon(effectL);
                 break;
+        }
+    }
+
+    boolean hasReacted = false;
+
+    public void Attacks(Entity e) {
+        if (this.atackHitbox.intersects(e.getHitbox())) {
+            if (!hasReacted) {
+                e.setHealth(e.getHealth() - 10);
+                hasReacted = true;
+            }
         }
     }
 
@@ -172,5 +241,7 @@ public class Warrior extends Entity {
         return warriorLabel;
     }
 
-
+    public JLabel getAtackEffect() {
+        return atackEffect;
+    }
 }

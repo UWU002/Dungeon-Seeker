@@ -20,6 +20,15 @@ public class GamePanel extends JPanel {
     public final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
 
+    public enum GameState {
+        START_MENU,
+        SELECTION_SCREEN,
+        GAME_PLAY
+    }
+
+    private GameState currentState = GameState.START_MENU;
+
+
 
     PlayerInputs pI = new PlayerInputs();
     private Timer gameTimer;
@@ -28,7 +37,7 @@ public class GamePanel extends JPanel {
     //temp object creation
     map map = new map(this);
     Warrior warrior = new Warrior(this, pI, map);
-    Skeleton skeleton = new Skeleton(this, pI, map);
+    Skeleton skeleton = new Skeleton(this, pI, map, 100, 50);
     GameHud gh = new GameHud(this, warrior.getHealth());
 
 
@@ -41,8 +50,14 @@ public class GamePanel extends JPanel {
         this.addKeyListener(pI);
         this.setFocusable(true);
         this.requestFocusInWindow();
+        zIndexPlacement();
+    }
+
+    private void zIndexPlacement() {
         this.setComponentZOrder(warrior.getWarriorLabel(), 1);
-        this.setComponentZOrder(skeleton.getSkeletonLabel(), 0);
+        this.setComponentZOrder(warrior.getAtackEffect(), 1);
+        this.setComponentZOrder(skeleton.getSkeletonLabel(), 1);
+        this.setComponentZOrder(skeleton.getSkeletonHealth(), 1);
     }
 
 
@@ -66,17 +81,12 @@ public class GamePanel extends JPanel {
         gh.update();
         checkCollisions();
     }
-    boolean hasReacted = false;
+
+    boolean hasReacted = false, hasReacted2 = false;
+
     private void checkCollisions() {
-        if (skeleton.getHitbox().intersects(warrior.getHitbox())) {
-            if (!hasReacted) {
-                gh.setHp(warrior.getHealth() - 10);
-                warrior.setHealth(warrior.getHealth() - 10);
-                hasReacted=true;
-            }
-        } else {
-            hasReacted=false;
-        }
+        skeleton.Attacks(warrior, gh);
+        warrior.Attacks(skeleton);
     }
 
     //Temporary player settings
@@ -86,8 +96,8 @@ public class GamePanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.RED);
         Rectangle hitbox = warrior.getHitbox();
-        Rectangle hitbox2= skeleton.getHitbox();
-        Rectangle atack= warrior.getAtackHitbox();
+        Rectangle hitbox2 = skeleton.getHitbox();
+        Rectangle atack = warrior.getAtackHitbox();
         g2.draw(hitbox);
         g2.draw(hitbox2);
         g2.draw(atack);

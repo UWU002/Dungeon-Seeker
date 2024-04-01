@@ -2,80 +2,65 @@ package Characters;
 
 import Main.GamePanel;
 import Main.PlayerInputs;
+import Menus.GameHud;
 import Tiles.map;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Skeleton extends Entity {
-    private JLabel skeletonLabel;
+    private JLabel skeletonLabel, skeletonHealth;
+    boolean death = false;
 
 
-    public Skeleton(GamePanel gp, PlayerInputs pI, map gameMap) {
-        super(gp, pI, gameMap);
+    public Skeleton(GamePanel gp, PlayerInputs pI, map gameMap, int x, int y) {
+        super(gp, pI, gameMap, x ,y);
         skeletonLabel = new JLabel();
-        loadImages();
-        setDefaultValues();
         gp.add(skeletonLabel);
         skeletonLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
         hitbox = new Rectangle(x + 5, y + 7, 20, 25);
+        skeletonHealth = new JLabel();
+        skeletonHealth.setLocation(905, 550);
+        skeletonHealth.setSize(100, 100);
+        skeletonHealth.setText(health + "");
+        skeletonHealth.setForeground(Color.red);
+        gp.add(skeletonHealth);
+        loadImages();
+        setDefaultValues();
     }
 
 
     public void setDefaultValues() {
         x = 100;
-        y = 600;
+        y = 50;
         health = 100;
         speed = 2;
         updateLabel();
     }
 
     public void update() {
-        movePlayer();
-        updateLabel();
+        if (!death) {
+            movePlayer();
+            updateLabel();
+        }
     }
 
+    private void deathAnimation() {
+        skeletonLabel.setIcon(die);
+        skeletonHealth.setText("");
+        new Timer(700, e -> {
+            skeletonHealth.setLocation(-1000, -1000);
+            skeletonLabel.setLocation(-1000, -1000);
+            hitbox.setLocation(-1000,-1000);
+        }).start();
+    }
 
     private void movePlayer() {
         int newX = x, newY = y;
+        //Movement System
 
-        if (pI.upPressed && !pI.rightPressed && !pI.downPressed && !pI.leftPressed) {
-            direction = "up";
-            newY -= speed;
-        } else if (pI.downPressed && !pI.rightPressed && !pI.leftPressed && !pI.upPressed) {
-            direction = "down";
-            newY += speed;
-        } else if (pI.leftPressed && !pI.rightPressed && !pI.downPressed && !pI.upPressed) {
-            direction = "left";
-            newX -= speed;
-        } else if (pI.rightPressed && !pI.upPressed && !pI.leftPressed && !pI.downPressed) {
-            direction = "right";
-            newX += speed;
-        } else if (pI.upPressed && pI.rightPressed) {
-            direction = "up";
-            newX += speed;
-            newY -= speed;
-        } else if (pI.upPressed && pI.leftPressed) {
-            direction = "up";
-            newX -= speed;
-            newY -= speed;
-        } else if (pI.downPressed && pI.rightPressed) {
-            direction = "down";
-            newX += speed;
-            newY += speed;
-        } else if (pI.downPressed && pI.leftPressed) {
-            direction = "down";
-            newX -= speed;
-            newY += speed;
-        } else if (!pI.rightPressed && !pI.downPressed) {
-            direction = "idle";
-        }
-//            if ("idle".equals(direction)) {
-//                hitbox.setLocation(x+5, y+7);
-//            }else {
-//                hitbox.setLocation(x+5,y+7);
-//            }
         hitbox.setLocation(x + 5, y + 7);
+        skeletonHealth.setLocation(x + 4, y - 50);
 
         if (canMove(newX, newY)) {
             x = newX;
@@ -103,11 +88,12 @@ public class Skeleton extends Entity {
         left = new ImageIcon("src/images/skeleton/skeleton_left.gif");
         right = new ImageIcon("src/images/skeleton/skeleton_right.gif");
         up = new ImageIcon("src/images/skeleton/skeleton_up.gif");
-
+        die = new ImageIcon("src/images/skeleton/deathExplosion.gif");
     }
 
 
     private void updateLabel() {
+        skeletonHealth.setText(health + "");
         switch (direction) {
             case "up":
                 skeletonLabel.setIcon(up);
@@ -125,6 +111,24 @@ public class Skeleton extends Entity {
                 skeletonLabel.setIcon(idle);
         }
         skeletonLabel.setLocation(x, y);
+        if (health <= 0) {
+            death = true;
+            deathAnimation();
+        }
+    }
+
+    boolean hasReacted = false;
+
+    public void Attacks(Entity player, GameHud gh) {
+        if (this.hitbox.intersects(player.getHitbox())) {
+            if (!hasReacted) {
+                gh.setHp(player.getHealth() - 10);
+                player.setHealth(player.getHealth() - 10);
+                hasReacted = true;
+            }
+        } else {
+            hasReacted = false;
+        }
     }
 
 
@@ -132,4 +136,7 @@ public class Skeleton extends Entity {
         return skeletonLabel;
     }
 
+    public JLabel getSkeletonHealth() {
+        return skeletonHealth;
+    }
 }

@@ -27,6 +27,13 @@ public class Entity {
         this.pI=pI;
         this.gameMap=gameMap;
     }
+    public Entity(GamePanel gp, PlayerInputs pI, map gameMap, int x, int y){
+        this.gp=gp;
+        this.pI=pI;
+        this.gameMap=gameMap;
+        this.x=x;
+        this.y=y;
+    }
 
     public Rectangle getHitbox() {
         return hitbox;
@@ -41,4 +48,5 @@ public class Entity {
     public void setHealth(int health) {
         this.health = health;
     }
+
 }
