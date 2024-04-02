@@ -2,6 +2,7 @@ package Characters;
 
 import Main.GamePanel;
 import Main.PlayerInputs;
+import Menus.GameHud;
 import Tiles.map;
 
 import javax.swing.*;
@@ -9,22 +10,22 @@ import java.awt.*;
 
 
 public class Warrior extends Entity {
-    private JLabel warriorLabel, atackEffect;
+    private JLabel playerLabel, atackEffect;
     private ImageIcon effectR, effectU, effectL, effectD;
 
-    public Warrior(GamePanel gp, PlayerInputs pI, map gameMap) {
-        super(gp, pI, gameMap);
-        warriorLabel = new JLabel();
+    public Warrior(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
+        super(gp, pI ,gameMap, gh);
+        playerLabel = new JLabel();
         loadImages();
         setDefaultValues();
-        gp.add(warriorLabel);
-        warriorLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
+        gp.add(playerLabel);
+        playerLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
         hitbox = new Rectangle(x + 10, y + 10, gp.originalTileSize, gp.originalTileSize);
         atackHitbox = new Rectangle(x + 10000, y, gp.originalTileSize, gp.originalTileSize);
         atackEffect = new JLabel(new ImageIcon());
         gp.add(atackEffect);
         atackEffect.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
-
+        gh.setHp(this.health);
 
         resetAttackFlagTimer = new Timer(700, e -> {
             pI.atacked = false;
@@ -46,10 +47,12 @@ public class Warrior extends Entity {
         y = 50;
         health = 100;
         speed = 2;
+        damage= 50;
         direction = "idle";
         updateLabel();
     }
 
+    @Override
     public void update() {
         movePlayer();
         updateLabel();
@@ -86,6 +89,8 @@ public class Warrior extends Entity {
             prevDirection = direction;
             newX += speed;
         }
+
+
         if (pI.atacked && canAtack) {
             canAtack = false;
             direction = "atack";
@@ -113,8 +118,6 @@ public class Warrior extends Entity {
         if (!resetAttackFlagTimer.isRunning()) {
             atackHitbox.setLocation(-10000, -10000);
         }
-
-
     }
 
     private void atackEffectDirection() {
@@ -183,65 +186,66 @@ public class Warrior extends Entity {
     private void updateLabel() {
         switch (direction) {
             case "up":
-                warriorLabel.setIcon(up);
+                playerLabel.setIcon(up);
                 break;
             case "down":
-                warriorLabel.setIcon(down);
+                playerLabel.setIcon(down);
                 break;
             case "right":
-                warriorLabel.setIcon(right);
+                playerLabel.setIcon(right);
                 break;
             case "left":
-                warriorLabel.setIcon(left);
+                playerLabel.setIcon(left);
                 break;
             case "atack":
                 atackDirection();
                 break;
             default:
-                warriorLabel.setIcon(idle);
+                playerLabel.setIcon(idle);
                 break;
         }
-        warriorLabel.setLocation(x, y);
+        playerLabel.setLocation(x, y);
     }
 
     private void atackDirection() {
         switch (prevDirection) {
             case "up":
-                warriorLabel.setIcon(atackU);
+                playerLabel.setIcon(atackU);
                 atackEffect.setIcon(effectU);
                 break;
             case "down":
-                warriorLabel.setIcon(atackD);
+                playerLabel.setIcon(atackD);
                 atackEffect.setIcon(effectD);
                 break;
             case "right":
-                warriorLabel.setIcon(atackR);
+                playerLabel.setIcon(atackR);
                 atackEffect.setIcon(effectR);
                 break;
             case "left":
-                warriorLabel.setIcon(atackL);
+                playerLabel.setIcon(atackL);
                 atackEffect.setIcon(effectL);
                 break;
         }
     }
 
     boolean hasReacted = false;
-
-    public void Attacks(Entity e) {
+    @Override
+    public void attacks(Entity e) {
         if (this.atackHitbox.intersects(e.getHitbox())) {
             if (!hasReacted) {
-                e.setHealth(e.getHealth() - 10);
+                e.setHealth(e.getHealth() - damage);
                 hasReacted = true;
             }
         }
     }
 
-
-    public JLabel getWarriorLabel() {
-        return warriorLabel;
+    @Override
+    public JLabel getLabel() {
+        return playerLabel;
     }
 
-    public JLabel getAtackEffect() {
+    @Override
+    public JLabel getEffect() {
         return atackEffect;
     }
 }

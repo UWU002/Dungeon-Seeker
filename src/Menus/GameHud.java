@@ -11,9 +11,8 @@ public class GameHud {
     private ImageIcon hp0,hp10,hp25,hp50,hp90,hp100; 
     private int hp, coins=0, screenHeight= 12* 48;
 
-    public GameHud(GamePanel gp, int characterHp) {
+    public GameHud(GamePanel gp) {
         this.gp = gp;
-        this.hp= characterHp;
         characterHealth();
     }
     public void update(){
