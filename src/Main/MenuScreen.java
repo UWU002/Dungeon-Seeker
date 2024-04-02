@@ -19,36 +19,34 @@ public class MenuScreen extends JPanel {
 
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setBackground(Color.BLACK); // Set the button panel background to black
+        buttonPanel.setBackground(Color.BLACK);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(190,50 , 0, 50));
 
         contentPanel = new JPanel(new CardLayout());
-        contentPanel.setBackground(Color.BLACK); // Set the content panel background to black
+        contentPanel.setBackground(Color.BLACK);
 
 
         createButtons();
 
-        // Create a wrapper panel for buttonPanel to align it correctly
+
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(buttonPanel, BorderLayout.EAST);
 
-        // Add the buttonPanel and contentPanel to the main panel
+
         add(leftPanel, BorderLayout.WEST);
         add(contentPanel, BorderLayout.CENTER);
     }
 
     private void createButtons() {
-        // Define titles for buttons to make code more readable and maintainable
         String[] titles = {"Warrior", "  Mage  ", "  Priest  "};
 
         for (int i = 0; i < titles.length; i++) {
             JButton button = getButton(titles[i]);
             buttonPanel.add(button);
-            buttonPanel.add(Box.createRigidArea(new Dimension(0, 20))); // Space between buttons
+            buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
 
             final int  finalI = i;
-            // Add a corresponding content panel to the contentPanel
             JPanel panel = getContentPanel(titles[finalI]);
             contentPanel.add(panel, titles[finalI]);
             button.addActionListener(e -> ((CardLayout) contentPanel.getLayout()).show(contentPanel, titles[finalI]));
@@ -57,20 +55,19 @@ public class MenuScreen extends JPanel {
 
     private static JButton getButton(String title) {
         JButton button = new JButton(title);
-        button.setForeground(Color.WHITE); // Text color
-        button.setBackground(Color.DARK_GRAY); // Button background
-        button.setFocusPainted(false); // Remove focus border
+        button.setForeground(Color.WHITE);
+        button.setBackground(Color.DARK_GRAY);
+        button.setFocusPainted(false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         return button;
     }
 
     private JPanel getContentPanel(String title) {
         JPanel panel = new JPanel();
-        panel.setLayout(null); // Vertically aligns components
-        panel.setBackground(Color.BLACK); // Sets background color
+        panel.setLayout(null);
+        panel.setBackground(Color.BLACK);
 
 
-        // Example content for each class; customize as needed
         JLabel text;
         switch (title) {
             case "Warrior":
@@ -100,7 +97,19 @@ public class MenuScreen extends JPanel {
         confirm.setBounds(310, 450, 100, 35);
         panel.add(confirm);
 
-        confirm.addActionListener(e -> {});
+        confirm.addActionListener(e -> {        JFrame frame = new JFrame("MainS");
+            frame.setLayout(null);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setResizable(false);
+            GamePanel gamePanel= new GamePanel();
+            gamePanel.characterSelection(title.trim());
+            frame.setContentPane(gamePanel);
+            frame.pack();
+            frame.setVisible(true);
+            frame.setLocationRelativeTo(null);
+            frame.addWindowListener(new GamePanel.frameWindowListener(frame));
+
+            gamePanel.startGame();});
 
         return panel;
     }

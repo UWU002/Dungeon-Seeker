@@ -13,8 +13,8 @@ public class Skeleton extends Entity {
     boolean death = false;
 
 
-    public Skeleton(GamePanel gp, PlayerInputs pI, map gameMap, int x, int y) {
-        super(gp, pI, gameMap, x ,y);
+    public Skeleton(GamePanel gp, PlayerInputs pI, map gameMap,GameHud gh , int x, int y) {
+        super(gp, pI,gameMap, gh, x ,y);
         skeletonLabel = new JLabel();
         gp.add(skeletonLabel);
         skeletonLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
@@ -38,6 +38,8 @@ public class Skeleton extends Entity {
         updateLabel();
     }
 
+
+    @Override
     public void update() {
         if (!death) {
             movePlayer();
@@ -119,7 +121,8 @@ public class Skeleton extends Entity {
 
     boolean hasReacted = false;
 
-    public void Attacks(Entity player, GameHud gh) {
+    @Override
+    public void attacks(Entity player) {
         if (this.hitbox.intersects(player.getHitbox())) {
             if (!hasReacted) {
                 gh.setHp(player.getHealth() - 10);
