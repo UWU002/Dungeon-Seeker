@@ -97,7 +97,8 @@ public class MenuScreen extends JPanel {
         confirm.setBounds(310, 450, 100, 35);
         panel.add(confirm);
 
-        confirm.addActionListener(e -> {        JFrame frame = new JFrame("MainS");
+
+        confirm.addActionListener(e -> {JFrame frame = new JFrame("MainS");
             frame.setLayout(null);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
@@ -108,8 +109,12 @@ public class MenuScreen extends JPanel {
             frame.setVisible(true);
             frame.setLocationRelativeTo(null);
             frame.addWindowListener(new GamePanel.frameWindowListener(frame));
+            gamePanel.startGame();
 
-            gamePanel.startGame();});
+
+            JFrame f= (JFrame) SwingUtilities.getRoot(this);
+            f.dispose();
+        });
 
         return panel;
     }
