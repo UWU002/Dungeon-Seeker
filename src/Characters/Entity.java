@@ -12,7 +12,7 @@ public class Entity {
     protected GamePanel gp;
     protected PlayerInputs pI;
     protected GameHud gh;
-    protected int x, y;
+    protected int x=50, y=50;
     protected int speed, health, damage;
     protected Rectangle hitbox, atackHitbox;
     protected map gameMap;
@@ -62,4 +62,10 @@ public class Entity {
         this.health = health;
     }
 
+    public int getX(){
+        return x;
+    }
+    public int getY(){
+        return y;
+    }
 }

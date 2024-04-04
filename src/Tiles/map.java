@@ -4,6 +4,7 @@ import Main.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.ArrayList;
 
 public class map {
@@ -13,6 +14,7 @@ public class map {
     private Rectangle wallHitbox;
     private ArrayList<Rectangle> hitboxes = new ArrayList<>();
     private int level = 0;
+    int playerX=0, playerY=0;
 
     public map(GamePanel gp) {
         this.gp = gp;
@@ -100,7 +102,6 @@ public class map {
         tile.setLocation(x * gp.originalTileSize, y * gp.originalTileSize);
         gp.add(tile);
     }
-
 
     public ArrayList<Rectangle> getHitboxes() {
         return hitboxes;

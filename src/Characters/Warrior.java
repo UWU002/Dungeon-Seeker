@@ -43,8 +43,6 @@ public class Warrior extends Entity {
 
 
     public void setDefaultValues() {
-        x = 50;
-        y = 50;
         health = 100;
         speed = 2;
         damage= 50;

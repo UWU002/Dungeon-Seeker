@@ -25,19 +25,19 @@ public class GamePanel extends JPanel {
 
     map map = new map(this);
     GameHud gh = new GameHud(this);
-    Entity player= new Entity(this, pI, map, gh);
+    public Entity player = new Entity(this, pI, map, gh);
 
     //temp object creation
-    Skeleton skeleton = new Skeleton(this, pI, map, gh,100, 50);
+    Skeleton skeleton = new Skeleton(this, pI, map, gh, 100, 50);
 
 
-    public void characterSelection(String characterType){
-        if ("Warrior".equalsIgnoreCase(characterType)){
-            player= new Warrior(this, pI, map,gh);
+    public void characterSelection(String characterType) {
+        if ("Warrior".equalsIgnoreCase(characterType)) {
+            player = new Warrior(this, pI, map, gh);
         } else if ("Mage".equalsIgnoreCase(characterType)) {
-            player= new Mage(this, pI, map, gh);
-        } else if ("Priest".equalsIgnoreCase(characterType)){
-            player= new Priest(this, pI, map, gh);
+            player = new Mage(this, pI, map, gh);
+        } else if ("Priest".equalsIgnoreCase(characterType)) {
+            player = new Priest(this, pI, map, gh);
         }
 
         zIndexPlacement();
@@ -81,7 +81,6 @@ public class GamePanel extends JPanel {
         player.update();
         skeleton.update();
 
-
         gh.update();
         checkCollisions();
     }
@@ -94,19 +93,9 @@ public class GamePanel extends JPanel {
     }
 
     //Temporary player settings
-
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(Color.RED);
-        Rectangle hitbox = player.getHitbox();
-        Rectangle hitbox2 = skeleton.getHitbox();
-        Rectangle atack = player.getAtackHitbox();
-        g2.draw(hitbox);
-        g2.draw(hitbox2);
-        g2.draw(atack);
     }
-
 
     public static class frameWindowListener extends WindowAdapter {
         JFrame frame;

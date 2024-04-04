@@ -110,8 +110,6 @@ public class MenuScreen extends JPanel {
             frame.setLocationRelativeTo(null);
             frame.addWindowListener(new GamePanel.frameWindowListener(frame));
             gamePanel.startGame();
-
-
             JFrame f= (JFrame) SwingUtilities.getRoot(this);
             f.dispose();
         });
