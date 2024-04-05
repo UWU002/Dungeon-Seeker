@@ -13,7 +13,8 @@ public class Entity {
     protected PlayerInputs pI;
     protected GameHud gh;
     protected int x=50, y=50;
-    protected int speed, health, damage;
+    protected int health, damage;
+    protected int speed;
     protected Rectangle hitbox, atackHitbox;
     protected map gameMap;
     protected Timer attackCooldownTimer;
@@ -60,6 +61,22 @@ public class Entity {
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public int getX(){

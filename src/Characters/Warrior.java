@@ -155,7 +155,7 @@ public class Warrior extends Entity {
     private boolean canMove(int newX, int newY) {
         Rectangle predictedHitbox = new Rectangle(newX + 10, newY + 10, hitbox.width, hitbox.height);
 
-        for (Rectangle wall : gameMap.getHitboxes()) {
+        for (Rectangle wall : gameMap.getWallHitboxes()) {
             if (predictedHitbox.intersects(wall)) {
                 return false;
             }
@@ -246,4 +246,7 @@ public class Warrior extends Entity {
     public JLabel getEffect() {
         return atackEffect;
     }
+
+
+
 }

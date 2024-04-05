@@ -14,4 +14,13 @@ public class Mage extends Entity{
 
         gh.setHp(this.health);
     }
+
+    public void setDefaultValues() {
+        health = 50;
+        speed = 3;
+        damage= 100;
+        direction = "idle";
+//        updateLabel();
+    }
+
 }
