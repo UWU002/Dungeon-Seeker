@@ -24,13 +24,19 @@ public class map {
     }
 
     private void setMonsterContainersPositions(){
-        tutorialZoneMC= new int [][]{};
+        tutorialZoneMC= new int [][]{
+                {63,25},{63,26},{63,27},{63,28},{63,29},{63,30},
+                {50,11},{51,11},{52,11},{53,11},{54,11},{55,11},{56,11},{57,11},{58,11},{59,11},{60,11},{62,11},{61,11},
+                {3,22},{4,22},{5,22},{6,22},{7,22},{8,22},{9,22},{10,22},{11,22},{12,22},{13,22},{14,22},{15,22}
+        };
         level1MC= new int [][]{};
         level2MC= new int [][]{};
     }
 
     private void setTpPositions(){
-        tutorialZoneTP= new int [][]{};
+        tutorialZoneTP= new int [][]{
+                {66,25},{66,26},{66,27},{66,28},{66,29},{66,30}
+        };
         level1TP= new int [][]{};
         level2TP= new int [][]{};
     }
@@ -158,5 +164,13 @@ public class map {
 
     public ArrayList<Rectangle> getWallHitboxes() {
         return wallHitboxes;
+    }
+
+    public ArrayList<Rectangle> getMonsterContainers() {
+        return monsterContainers;
+    }
+
+    public ArrayList<Rectangle> getTps() {
+        return tps;
     }
 }

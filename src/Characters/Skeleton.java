@@ -7,6 +7,9 @@ import Tiles.map;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Skeleton extends Entity {
@@ -66,18 +69,31 @@ public class Skeleton extends Entity {
 
     private boolean playerVisible() {
         Entity player = gp.player;
-        int distanceX = Math.abs(player.x - this.x);
-        int distanceY = Math.abs(player.y - this.y);
-
-
+        int distanceX = Math.abs(player.getX() - this.x);
+        int distanceY = Math.abs(player.getY() - this.y);
         if (distanceX <= detectionRange * gp.originalTileSize && distanceY <= detectionRange * gp.originalTileSize) {
-            return !isWallBetween(player.x, player.y);
+            return !isWallBetween(this.x, this.y, player.getX(), player.getY());
         }
         return false;
     }
 
-    private boolean isWallBetween(int x, int y) {
-
+    private boolean isWallBetween(int startX, int startY, int endX, int endY) {
+        List<Point> linePoints = lineToPlayer(startX / gp.originalTileSize, startY / gp.originalTileSize, endX / gp.originalTileSize, endY / gp.originalTileSize);
+        for (Point point : linePoints) {
+            int checkX = point.x * gp.originalTileSize;
+            int checkY = point.y * gp.originalTileSize;
+            Rectangle checkRect = new Rectangle(checkX, checkY, gp.originalTileSize, gp.originalTileSize);
+            for (Rectangle wall : gameMap.getWallHitboxes()) {
+                if (checkRect.intersects(wall)) {
+                    return true;
+                }
+            }
+            for (Rectangle MC : gameMap.getMonsterContainers()) {
+                if (checkRect.intersects(MC)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -194,6 +210,11 @@ public class Skeleton extends Entity {
                 return false;
             }
         }
+        for (Rectangle MC : gameMap.getMonsterContainers()){
+            if (predictedHitbox.intersects(MC)){
+                return false;
+            }
+        }
         return true;
     }
 
@@ -249,6 +270,34 @@ public class Skeleton extends Entity {
     }
 
 
+    // Bresenhams Line algorithm
+    private List<Point> lineToPlayer(int x0, int y0, int x1, int y1) {
+        List<Point> line = new ArrayList<>();
+
+        int dx = Math.abs(x1 - x0);
+        int dy = -Math.abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx + dy, e2; /* error value e_xy */
+
+        while (true) {
+            line.add(new Point(x0, y0));
+            if (x0 == x1 && y0 == y1) break;
+            e2 = 2 * err;
+            if (e2 >= dy) { /* e_xy+e_x > 0 */
+                err += dy;
+                x0 += sx;
+            }
+            if (e2 <= dx) { /* e_xy+e_y < 0 */
+                err += dx;
+                y0 += sy;
+            }
+        }
+
+        return line;
+    }
+
+
     public JLabel getSkeletonLabel() {
         return skeletonLabel;
     }
@@ -256,4 +305,5 @@ public class Skeleton extends Entity {
     public JLabel getSkeletonHealth() {
         return skeletonHealth;
     }
+
 }
