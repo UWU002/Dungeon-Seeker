@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
 
@@ -18,6 +19,8 @@ public class GamePanel extends JPanel {
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
+    // Skeletons Array
+    ArrayList<Skeleton> skeletons = new ArrayList<>();
 
 
     PlayerInputs pI = new PlayerInputs();
@@ -26,9 +29,6 @@ public class GamePanel extends JPanel {
     map map = new map(this);
     GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
-
-    //temp object creation
-    Skeleton skeleton = new Skeleton(this, pI, map, gh, 100, 50);
 
 
     public void characterSelection(String characterType) {
@@ -41,7 +41,6 @@ public class GamePanel extends JPanel {
         }
 
         zIndexPlacement();
-        System.out.println(characterType);
     }
 
     public GamePanel() {
@@ -53,13 +52,26 @@ public class GamePanel extends JPanel {
         this.addKeyListener(pI);
         this.setFocusable(true);
         this.requestFocusInWindow();
+        loadSkeletons();
+    }
+
+    private void loadSkeletons() {
+        for (int i = 0; i < map.getSkeletons().length; i++) {
+            int x = map.getSkeletons()[i][0];
+            int y = map.getSkeletons()[i][1];
+            skeletons.add( new Skeleton(this, pI, map, gh, x, y));
+        }
     }
 
     private void zIndexPlacement() {
         this.setComponentZOrder(player.getLabel(), 1);
         this.setComponentZOrder(player.getEffect(), 1);
-        this.setComponentZOrder(skeleton.getSkeletonLabel(), 1);
-        this.setComponentZOrder(skeleton.getSkeletonHealth(), 1);
+
+
+        for (Skeleton s : skeletons){
+            this.setComponentZOrder(s.getSkeletonLabel(), 1);
+            this.setComponentZOrder(s.getSkeletonHealth(),1);
+        }
     }
 
 
@@ -79,8 +91,9 @@ public class GamePanel extends JPanel {
 
     private void updateGame() {
         player.update();
-        skeleton.update();
-
+        for (Skeleton s : skeletons){
+            s.update();
+        }
         gh.update();
         checkCollisions();
     }
@@ -88,8 +101,10 @@ public class GamePanel extends JPanel {
     boolean hasReacted = false, hasReacted2 = false;
 
     private void checkCollisions() {
-        skeleton.attacks(player);
-        player.attacks(skeleton);
+        for (Skeleton s : skeletons){
+            s.attacks(player);
+            player.attacks(s);
+        }
     }
 
     //Temporary player settings

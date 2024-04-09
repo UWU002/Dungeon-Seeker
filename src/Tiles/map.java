@@ -11,6 +11,7 @@ public class map {
     private int[][] tutorialZoneWalls, level1Walls, level2Walls;
     private int[][] tutorialZoneTP, level1TP, level2TP;
     private int[][] tutorialZoneMC, level1MC, level2MC;
+    private int[][] tutorialZoneMonsters, level1Monsters, level2Monsters;
     private Rectangle wallHitbox,monsterContainer, tp;
     private ArrayList<Rectangle> wallHitboxes = new ArrayList<>();
     private ArrayList<Rectangle> monsterContainers = new ArrayList<>();
@@ -21,6 +22,15 @@ public class map {
     public map(GamePanel gp) {
         this.gp = gp;
         generateMap();
+    }
+
+
+    private void setMonsterPositions(){
+        tutorialZoneMonsters= new int[][]{
+                {500, 50}, {500, 80}
+        };
+        level1MC= new int [][]{};
+        level2MC= new int [][]{};
     }
 
     private void setMonsterContainersPositions(){
@@ -73,6 +83,7 @@ public class map {
         setWallPositions();
         setTpPositions();
         setMonsterContainersPositions();
+        setMonsterPositions();
         for (int i = 0; i < gp.screenTileWidth * gp.scale; i++) {
             for (int j = 0; j < gp.screenTileHeight * gp.scale; j++) {
                 if (isWall(i, j)) {
@@ -172,5 +183,17 @@ public class map {
 
     public ArrayList<Rectangle> getTps() {
         return tps;
+    }
+
+    public  int[][] getSkeletons(){
+        switch (level){
+            case 0:
+                return tutorialZoneMonsters;
+            case 1:
+                return level1Monsters;
+            case 2:
+                return level2Monsters;
+        }
+        return null;
     }
 }

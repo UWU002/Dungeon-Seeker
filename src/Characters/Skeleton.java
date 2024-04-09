@@ -14,10 +14,10 @@ import java.util.Random;
 
 public class Skeleton extends Entity {
     private JLabel skeletonLabel, skeletonHealth;
-    private Timer movementTimer;
+    private Timer movementTimer, detectionTimer;
     private Random r = new Random();
     private final int detectionRange = 7;
-    private int check=0;
+    private int check = 0, randomNum = 50;
     boolean death = false;
 
 
@@ -39,8 +39,7 @@ public class Skeleton extends Entity {
     }
 
     public void setDefaultValues() {
-        x = 500;
-        y = 50;
+        damage = 10;
         health = 100;
         speed = 1;
         updateLabel();
@@ -54,12 +53,13 @@ public class Skeleton extends Entity {
 
     private void isPlayerInRange() {
         if (!death) {
-            if (playerVisible()) {
+            if (playerVisible() && !gp.player.getDead()) {
                 moveToPlayer();
             } else {
-                if (check >= 50){
-                    check=0;
+                if (check >= randomNum) {
+                    check = 0;
                     randomMove();
+                    randomNum = r.nextInt(30, 200);
                 }
                 check++;
             }
@@ -125,16 +125,22 @@ public class Skeleton extends Entity {
         int playerY = player.y;
 
         int newX = this.x, newY = this.y;
+        int margin = 10;
+        boolean verticalMovement = false;
 
-
-        if (playerY > this.y) {
-            newY += speed;
-            direction = "down";
-        } else if (playerY < this.y) {
-            newY -= speed;
-            direction = "up";
+        if (Math.abs(playerY - this.y) > margin) {
+            if (playerY > this.y) {
+                newY += speed;
+                direction = "down";
+                verticalMovement = true;
+            } else if (playerY < this.y) {
+                newY -= speed;
+                direction = "up";
+                verticalMovement = true;
+            }
         }
 
+        if (!verticalMovement) {
             if (playerX > this.x) {
                 newX += speed;
                 direction = "right";
@@ -142,6 +148,7 @@ public class Skeleton extends Entity {
                 newX -= speed;
                 direction = "left";
             }
+        }
 
 
         if (canMove(newX, newY)) {
@@ -210,8 +217,8 @@ public class Skeleton extends Entity {
                 return false;
             }
         }
-        for (Rectangle MC : gameMap.getMonsterContainers()){
-            if (predictedHitbox.intersects(MC)){
+        for (Rectangle MC : gameMap.getMonsterContainers()) {
+            if (predictedHitbox.intersects(MC)) {
                 return false;
             }
         }
@@ -260,8 +267,8 @@ public class Skeleton extends Entity {
     public void attacks(Entity player) {
         if (this.hitbox.intersects(player.getHitbox())) {
             if (!hasReacted) {
-                gh.setHp(player.getHealth() - 10);
-                player.setHealth(player.getHealth() - 10);
+                gh.setHp(player.getHealth() - damage);
+                player.setHealth(player.getHealth() - damage);
                 hasReacted = true;
             }
         } else {
@@ -305,5 +312,6 @@ public class Skeleton extends Entity {
     public JLabel getSkeletonHealth() {
         return skeletonHealth;
     }
+
 
 }

@@ -19,10 +19,10 @@ public class Entity {
     protected map gameMap;
     protected Timer attackCooldownTimer;
     protected Timer resetAttackFlagTimer;
-    protected boolean canAtack=true;
+    protected boolean canAtack=true, dead=false;
 
     protected ImageIcon up, left, down, right, idle, atackR, atackU, atackD, atackL, die;
-    protected String direction = "idle", prevDirection="right";
+    protected String direction = "idle", prevDirection="", prevVerticalDirection="", prevHorizontalDirection="";
 
 
     public Entity(GamePanel gp, PlayerInputs pI ,map gameMap, GameHud gh){
@@ -48,6 +48,7 @@ public class Entity {
         return null;
     }
     public void attacks(Entity e){}
+
 
     public Rectangle getHitbox() {
         return hitbox;
@@ -77,6 +78,10 @@ public class Entity {
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public boolean getDead(){
+        return dead;
     }
 
     public int getX(){

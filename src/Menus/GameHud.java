@@ -17,6 +17,7 @@ public class GameHud {
     }
     public void update(){
         updateLabel();
+        keep0heath();
     }
 
 
@@ -59,6 +60,12 @@ public class GameHud {
             healthBar.setIcon(hp10);
         } else if (hp<=0){
             healthBar.setIcon(hp0);
+        }
+    }
+
+    private void keep0heath() {
+        if (hp < 0){
+            hp=0;
         }
     }
 
