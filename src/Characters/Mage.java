@@ -13,6 +13,9 @@ public class Mage extends Entity {
     private JLabel playerLabel, atackEffect, explosionLabel;
     private ImageIcon effectR, effectU, effectL, effectD, explosion;
     private Rectangle explosionHitbox;
+    private Timer fireballMovement;
+    private int fSPX, fSPY;
+
 
     public Mage(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
         super(gp, pI, gameMap, gh);
@@ -33,7 +36,7 @@ public class Mage extends Entity {
         gh.setHp(this.health);
         AttackFlagTimer();
         attackCooldown();
-        explosionTimer();
+        fireballTimer();
     }
 
     public void setDefaultValues() {
@@ -45,8 +48,35 @@ public class Mage extends Entity {
     }
 
 
-    private void explosionTimer() {
+    private void fireballTimer() {
+        fireballMovement = new Timer(50, e -> {
+            int dx = 0, dy = 0;
+            switch (prevDirection) {
+                case "up":
+                    dy = -2;
+                    break;
+                case "down":
+                    dy = 2;
+                    break;
+                case "right":
+                    dx = 2;
+                    break;
+                case "left":
+                    dx = -2;
+                    break;
+            }
+            atackHitbox.setLocation(atackHitbox.x + dx, atackHitbox.y + dy);
+            atackEffect.setLocation((int)atackHitbox.getX(), (int)atackHitbox.getY());
+            System.out.println(atackHitbox.getX() + atackHitbox.getY());
 
+        if (fireballHit() || reachedLocation(atackHitbox.x, atackHitbox.y)) {
+            fireballMovement.stop();
+            explosionLabel.setIcon(explosion);
+            explosionLabel.setLocation(atackHitbox.x, atackHitbox.y);
+            explosionHitbox.setLocation(atackHitbox.x, atackHitbox.y);
+            atackHitbox.setLocation(-10000, -10000);
+        }
+    });
     }
 
     private void attackCooldown() {
@@ -61,8 +91,6 @@ public class Mage extends Entity {
         resetAttackFlagTimer = new Timer(700, e -> {
             pI.atacked = false;
             direction = "idle";
-            atackHitbox.setLocation(-10000, -10000);
-            atackEffect.setLocation(-10000, -10000);
             resetAttackFlagTimer.stop();
         });
     }
@@ -83,7 +111,7 @@ public class Mage extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "up";
             }
-            prevVerticalDirection = direction;
+            prevVerticalDirection = "up";
             prevDirection = direction;
             newY -= speed;
         }
@@ -91,7 +119,7 @@ public class Mage extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "left";
             }
-            prevHorizontalDirection = direction;
+            prevHorizontalDirection = "left";
             prevDirection = direction;
             newX -= speed;
         }
@@ -99,7 +127,7 @@ public class Mage extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "down";
             }
-            prevVerticalDirection = direction;
+            prevVerticalDirection = "down";
             prevDirection = direction;
             newY += speed;
         }
@@ -107,7 +135,7 @@ public class Mage extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "right";
             }
-            prevHorizontalDirection = direction;
+            prevHorizontalDirection = "right";
             prevDirection = direction;
             newX += speed;
         }
@@ -119,11 +147,11 @@ public class Mage extends Entity {
             atackHitbox.setLocation((int) hitbox.getX() + calculateAttackXOffset(), (int) hitbox.getY() + calculateAttackYOffset());
             atackEffect.setLocation(atackHitbox.x, atackHitbox.y);
             hasReacted = false;
-            moveFireball();
             resetAttackFlagTimer.start();
             attackCooldownTimer.start();
-        } else {
-            atackHitbox.setLocation(-10000, -10000);
+            fSPX= hitbox.x;
+            fSPY= hitbox.y;
+            fireballMovement.start();
         }
 
         if (!pI.downPressed && !pI.rightPressed && !pI.leftPressed && !pI.upPressed && !pI.atacked) {
@@ -144,40 +172,40 @@ public class Mage extends Entity {
         }
     }
 
-    private void moveFireball() {
-        int offset;
-        int o=0;
+    private boolean fireballHit() {
+
+
+        return false;
+    }
+
+    private boolean reachedLocation(int x, int y) {
+        int maxDistance, distance=50;
         switch (prevDirection) {
             case "up":
-                offset = atackHitbox.y - 20;
-                while (atackHitbox.y > offset && !fireballHit()){
-                    atackHitbox.setLocation(x, y-2);
-                    atackEffect.setLocation(atackHitbox.x,atackHitbox.y);
-                    System.out.println("step reached"+o);
-                o++;
+                maxDistance=fSPY - distance;
+                if (y<=maxDistance){
+                    return true;
                 }
                 break;
             case "down":
-                offset = atackHitbox.y + 20;
+                maxDistance=fSPY + distance;
+                if (y>=maxDistance){
+                    return true;
+                }
                 break;
             case "right":
-                offset = atackHitbox.x + 20;
+                maxDistance=fSPX + distance;
+                if (x>=maxDistance){
+                    return true;
+                }
                 break;
             case "left":
-                offset= atackHitbox.x - 20;
+                maxDistance=fSPX - distance;
+                if (x<=maxDistance){
+                    return true;
+                }
                 break;
         }
-        explosionLabel.setIcon(explosion);
-        explosionLabel.setLocation(atackHitbox.x,atackHitbox.y);
-        explosionHitbox.setLocation(atackHitbox.x, atackHitbox.y);
-
-
-
-
-
-    }
-
-    private boolean fireballHit() {
 
         return false;
     }

@@ -65,7 +65,7 @@ public class Warrior extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "up";
             }
-            prevVerticalDirection=direction;
+            prevVerticalDirection = "up";
             prevDirection = direction;
             newY -= speed;
         }
@@ -73,7 +73,7 @@ public class Warrior extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "left";
             }
-            prevHorizontalDirection=direction;
+            prevHorizontalDirection = "left";
             prevDirection = direction;
             newX -= speed;
         }
@@ -81,7 +81,7 @@ public class Warrior extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "down";
             }
-            prevVerticalDirection=direction;
+            prevVerticalDirection = "down";
             prevDirection = direction;
             newY += speed;
         }
@@ -89,7 +89,7 @@ public class Warrior extends Entity {
             if (!resetAttackFlagTimer.isRunning()) {
                 direction = "right";
             }
-            prevHorizontalDirection=direction;
+            prevHorizontalDirection = "right";
             prevDirection = direction;
             newX += speed;
         }
@@ -159,7 +159,7 @@ public class Warrior extends Entity {
     }
 
     private boolean canMove(int newX, int newY) {
-        Rectangle predictedHitbox=new Rectangle();
+        Rectangle predictedHitbox = new Rectangle();
         if ("up".equalsIgnoreCase(prevVerticalDirection) && "Left".equalsIgnoreCase(prevHorizontalDirection)) {
             predictedHitbox = new Rectangle(newX, newY, hitbox.width, hitbox.height);
         } else if ("up".equalsIgnoreCase(prevVerticalDirection) && "right".equalsIgnoreCase(prevHorizontalDirection)) {
