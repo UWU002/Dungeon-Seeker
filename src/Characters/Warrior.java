@@ -107,9 +107,11 @@ public class Warrior extends Entity {
         } else {
             atackHitbox.setLocation(-10000, -10000);
         }
+
         if (!pI.downPressed && !pI.rightPressed && !pI.leftPressed && !pI.upPressed && !pI.atacked) {
             direction = "idle";
         }
+
 
         if (canMove(newX, newY)) {
             x = newX;

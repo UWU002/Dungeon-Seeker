@@ -59,18 +59,19 @@ public class GamePanel extends JPanel {
         for (int i = 0; i < map.getSkeletons().length; i++) {
             int x = map.getSkeletons()[i][0];
             int y = map.getSkeletons()[i][1];
-            skeletons.add( new Skeleton(this, pI, map, gh, x, y));
+            skeletons.add(new Skeleton(this, pI, map, gh, x, y));
         }
     }
 
     private void zIndexPlacement() {
         this.setComponentZOrder(player.getLabel(), 1);
         this.setComponentZOrder(player.getEffect(), 1);
-
-
-        for (Skeleton s : skeletons){
+        if (player.getEffect2() != null) {
+            this.setComponentZOrder(player.getEffect2(), 1);
+        }
+        for (Skeleton s : skeletons) {
             this.setComponentZOrder(s.getSkeletonLabel(), 1);
-            this.setComponentZOrder(s.getSkeletonHealth(),1);
+            this.setComponentZOrder(s.getSkeletonHealth(), 1);
         }
     }
 
@@ -91,7 +92,7 @@ public class GamePanel extends JPanel {
 
     private void updateGame() {
         player.update();
-        for (Skeleton s : skeletons){
+        for (Skeleton s : skeletons) {
             s.update();
         }
         gh.update();
@@ -101,7 +102,7 @@ public class GamePanel extends JPanel {
     boolean hasReacted = false, hasReacted2 = false;
 
     private void checkCollisions() {
-        for (Skeleton s : skeletons){
+        for (Skeleton s : skeletons) {
             s.attacks(player);
             player.attacks(s);
         }

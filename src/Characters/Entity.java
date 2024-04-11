@@ -47,6 +47,10 @@ public class Entity {
     public JLabel getLabel(){
         return null;
     }
+    public JLabel getEffect2(){return  null;}
+    public boolean getCanAtack(){
+        return canAtack;
+    }
     public void attacks(Entity e){}
 
 

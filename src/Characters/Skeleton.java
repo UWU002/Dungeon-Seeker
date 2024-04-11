@@ -210,7 +210,14 @@ public class Skeleton extends Entity {
     }
 
     private boolean canMove(int newX, int newY) {
-        Rectangle predictedHitbox = new Rectangle(newX + 10, newY + 10, hitbox.width, hitbox.height);
+        Rectangle predictedHitbox = new Rectangle();
+        if ("up".equalsIgnoreCase(direction) || "left".equalsIgnoreCase(direction)) {
+            predictedHitbox = new Rectangle(newX, newY, hitbox.width, hitbox.height);
+        } else if ("right".equalsIgnoreCase(direction)) {
+            predictedHitbox = new Rectangle(newX + 10, newY, hitbox.width, hitbox.height);
+        } else if ("down".equalsIgnoreCase(direction)) {
+            predictedHitbox = new Rectangle(newX, newY + 10, hitbox.width, hitbox.height);
+        }
 
         for (Rectangle wall : gameMap.getWallHitboxes()) {
             if (predictedHitbox.intersects(wall)) {

@@ -7,13 +7,15 @@ import Tiles.map;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Time;
 
 
 public class Mage extends Entity {
     private JLabel playerLabel, atackEffect, explosionLabel;
     private ImageIcon effectR, effectU, effectL, effectD, explosion;
     private Rectangle explosionHitbox;
-    private Timer fireballMovement;
+    private Timer fireballMovement, explosionMove;
+    private String shootingDirection;
     private int fSPX, fSPY;
 
 
@@ -31,8 +33,8 @@ public class Mage extends Entity {
         gp.add(atackEffect);
         atackEffect.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
         explosionLabel = new JLabel(new ImageIcon());
-        gp.add(explosionLabel);
         explosionLabel.setSize(gp.originalTileSize * 3, gp.originalTileSize * 3);
+        gp.add(explosionLabel);
         gh.setHp(this.health);
         AttackFlagTimer();
         attackCooldown();
@@ -49,40 +51,48 @@ public class Mage extends Entity {
 
 
     private void fireballTimer() {
-        fireballMovement = new Timer(50, e -> {
+        fireballMovement = new Timer(18, e -> {
             int dx = 0, dy = 0;
-            switch (prevDirection) {
+            switch (shootingDirection) {
                 case "up":
-                    dy = -2;
+                    dy = -5;
                     break;
                 case "down":
-                    dy = 2;
+                    dy = 5;
                     break;
                 case "right":
-                    dx = 2;
+                    dx = 5;
                     break;
                 case "left":
-                    dx = -2;
+                    dx = -5;
                     break;
             }
             atackHitbox.setLocation(atackHitbox.x + dx, atackHitbox.y + dy);
             atackEffect.setLocation((int)atackHitbox.getX(), (int)atackHitbox.getY());
-            System.out.println(atackHitbox.getX() + atackHitbox.getY());
+
 
         if (fireballHit() || reachedLocation(atackHitbox.x, atackHitbox.y)) {
             fireballMovement.stop();
-            explosionLabel.setIcon(explosion);
             explosionLabel.setLocation(atackHitbox.x, atackHitbox.y);
+            explosionLabel.setIcon(explosion);
             explosionHitbox.setLocation(atackHitbox.x, atackHitbox.y);
             atackHitbox.setLocation(-10000, -10000);
+            atackEffect.setLocation(-10000, 10000);
+            explosionMove=new Timer(450, ev->{
+                explosionLabel.setLocation(-1000, -10000);
+                explosionHitbox.setLocation(-10000, -10000);
+                explosionMove.stop();
+            });
+            explosionMove.start();
         }
     });
     }
 
     private void attackCooldown() {
-        attackCooldownTimer = new Timer(2000, e -> {
+        attackCooldownTimer = new Timer(3000, e -> {
             canAtack = true;
             hasReacted = false;
+            pI.atacked=false;
             attackCooldownTimer.stop();
         });
     }
@@ -144,6 +154,7 @@ public class Mage extends Entity {
         if (pI.atacked && canAtack) {
             canAtack = false;
             direction = "atack";
+            shootingDirection= prevDirection;
             atackHitbox.setLocation((int) hitbox.getX() + calculateAttackXOffset(), (int) hitbox.getY() + calculateAttackYOffset());
             atackEffect.setLocation(atackHitbox.x, atackHitbox.y);
             hasReacted = false;
@@ -167,9 +178,6 @@ public class Mage extends Entity {
 
 
         hitbox.setLocation(x + 10, y + 10);
-        if (!resetAttackFlagTimer.isRunning()) {
-            atackHitbox.setLocation(-10000, -10000);
-        }
     }
 
     private boolean fireballHit() {
@@ -179,8 +187,8 @@ public class Mage extends Entity {
     }
 
     private boolean reachedLocation(int x, int y) {
-        int maxDistance, distance=50;
-        switch (prevDirection) {
+        int maxDistance, distance=200;
+        switch (shootingDirection) {
             case "up":
                 maxDistance=fSPY - distance;
                 if (y<=maxDistance){
@@ -267,7 +275,7 @@ public class Mage extends Entity {
         effectD = new ImageIcon("src/images/wizard/atackEffect_down.gif");
         effectL = new ImageIcon("src/images/wizard/atackEffect_left.gif");
         effectR = new ImageIcon("src/images/wizard/atackEffect_right.gif");
-        explosion = new ImageIcon("src/images/wizard/atackEffect_exp");
+        explosion = new ImageIcon("src/images/wizard/atackEffect_exp.gif");
 
 
         die = new ImageIcon("src/images/wizard/wizard_die.gif");
@@ -349,5 +357,9 @@ public class Mage extends Entity {
         return atackEffect;
     }
 
+    @Override
+    public JLabel getEffect2(){
+        return explosionLabel;
+    }
 
 }
