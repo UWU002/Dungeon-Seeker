@@ -99,13 +99,12 @@ public class GamePanel extends JPanel {
         checkCollisions();
     }
 
-    boolean hasReacted = false, hasReacted2 = false;
-
     private void checkCollisions() {
         for (Skeleton s : skeletons) {
             s.attacks(player);
             player.attacks(s);
         }
+        player.attacks(player);
     }
 
     //Temporary player settings
@@ -136,6 +135,10 @@ public class GamePanel extends JPanel {
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             }
         }
+    }
+
+    public ArrayList<Skeleton> getSkeletons() {
+        return skeletons;
     }
 
     private long lastTimeCheck = System.nanoTime();

@@ -43,7 +43,7 @@ public class Mage extends Entity {
 
     public void setDefaultValues() {
         health = 40;
-        speed = 3;
+        speed = 2;
         damage = 100;
         direction = "idle";
         updateLabel();
@@ -181,8 +181,16 @@ public class Mage extends Entity {
     }
 
     private boolean fireballHit() {
-
-
+        for (Skeleton s : gp.getSkeletons()){
+            if (atackHitbox.intersects(s.getHitbox())){
+                return true;
+            }
+        }
+        for (Rectangle r : gameMap.getWallHitboxes()){
+            if (atackHitbox.intersects(r)){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -342,6 +350,9 @@ public class Mage extends Entity {
         if (this.explosionHitbox.intersects(e.getHitbox())) {
             if (!hasReacted) {
                 e.setHealth(e.getHealth() - damage);
+                if (!(e instanceof Skeleton)){
+                    gh.setHp(e.getHealth() - damage);
+                }
                 hasReacted = true;
             }
         }
