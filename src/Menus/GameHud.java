@@ -7,9 +7,9 @@ import java.awt.*;
 
 public class GameHud {
     GamePanel gp;
-    private JLabel inventory, healthBar, gold,healthNum, atackAvailable;
-    private ImageIcon hp0,hp10,hp25,hp50,hp90,hp100, check, cross;
-    private int hp, coins=0, screenHeight= 12* 48;
+    private JLabel inventory, healthBar, gold, healthNum, atackAvailable;
+    private ImageIcon hp0, hp10, hp25, hp50, hp90, hp100, check, cross;
+    private int hp, coins = 0, screenHeight = 12 * 48;
 
     public GameHud(GamePanel gp) {
         this.gp = gp;
@@ -18,8 +18,7 @@ public class GameHud {
     }
 
 
-
-    public void update(){
+    public void update() {
         updateLabel();
         keep0heath();
         atackCooldownVisual();
@@ -29,12 +28,12 @@ public class GameHud {
         healthBar = new JLabel();
         loadImages();
         gp.add(healthBar);
-        healthBar.setLocation(gp.tileSize*17, screenHeight+20);
+        healthBar.setLocation(gp.tileSize * 17, screenHeight + 20);
         healthBar.setSize(200, 70);
-        healthNum= new JLabel();
-        healthNum.setLocation(905,550);
-        healthNum.setSize(100,100);
-        healthNum.setText(hp+"hp");
+        healthNum = new JLabel();
+        healthNum.setLocation(905, 550);
+        healthNum.setSize(100, 100);
+        healthNum.setText(hp + "hp");
         healthNum.setForeground(Color.red);
         healthNum.setFont(new Font("Arial", Font.BOLD, 20));
         gp.add(healthNum);
@@ -42,18 +41,18 @@ public class GameHud {
     }
 
     private void canAtack() {
-        atackAvailable= new JLabel();
+        atackAvailable = new JLabel();
         loadImages();
         gp.add(atackAvailable);
-        atackAvailable.setLocation(gp.tileSize*10, screenHeight+12);
+        atackAvailable.setLocation(gp.tileSize * 10, screenHeight + 12);
         atackAvailable.setSize(80, 80);
         atackAvailable.setIcon(check);
     }
 
     private void atackCooldownVisual() {
-        if (gp.player!= null && gp.player.getCanAtack()){
+        if (gp.player != null && gp.player.getCanAtack()) {
             atackAvailable.setIcon(check);
-        } else if (gp.player!= null && !gp.player.getCanAtack()){
+        } else if (gp.player != null && !gp.player.getCanAtack()) {
             atackAvailable.setIcon(cross);
         }
     }
@@ -68,27 +67,30 @@ public class GameHud {
         check = new ImageIcon("src/images/MenuItems/check.png");
         cross = new ImageIcon("src/images/MenuItems/cross.png");
     }
-    private void updateLabel() {
-        healthNum.setText(hp+"hp");
 
-        if (hp<=100 && hp>90){
+    private void updateLabel() {
+        healthNum.setText(hp + "hp");
+
+        if (hp <= 100 && hp > 90) {
             healthBar.setIcon(hp100);
-        } else if (hp<=90 && hp>50) {
+        } else if (hp <= 90 && hp > 50) {
             healthBar.setIcon(hp90);
-        } else if (hp<=50 && hp>25) {
+        } else if (hp <= 50 && hp > 25) {
             healthBar.setIcon(hp50);
-        } else if (hp<=25 && hp>10) {
+        } else if (hp <= 25 && hp > 10) {
             healthBar.setIcon(hp25);
-        } else if (hp<=10 && hp>0) {
+        } else if (hp <= 10 && hp > 0) {
             healthBar.setIcon(hp10);
-        } else if (hp<=0){
+        } else if (hp <= 0) {
             healthBar.setIcon(hp0);
+        } else if (hp > 100) {
+            healthBar.setIcon(hp100);
         }
     }
 
     private void keep0heath() {
-        if (hp < 0){
-            hp=0;
+        if (hp < 0) {
+            hp = 0;
         }
     }
 

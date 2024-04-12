@@ -5,13 +5,19 @@ import Main.PlayerInputs;
 import Menus.GameHud;
 import Tiles.map;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 
 public class Warrior extends Entity {
     private JLabel playerLabel, atackEffect;
     private ImageIcon effectR, effectU, effectL, effectD;
+    private int originalHP;
 
     public Warrior(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
         super(gp, pI, gameMap, gh);
@@ -44,6 +50,7 @@ public class Warrior extends Entity {
 
     public void setDefaultValues() {
         health = 100;
+        originalHP=health+10;
         speed = 2;
         damage = 50;
         direction = "idle";
@@ -55,6 +62,17 @@ public class Warrior extends Entity {
         if (!dead) {
             movePlayer();
             updateLabel();
+            takeHalfDamage();
+        }
+    }
+
+    private void takeHalfDamage(){
+        if (health < originalHP){
+            health+=10;
+            originalHP=health;
+        }
+        if (health > originalHP){
+            originalHP=health;
         }
     }
 
@@ -100,6 +118,7 @@ public class Warrior extends Entity {
             direction = "atack";
             atackHitbox.setLocation((int) hitbox.getX() + calculateAttackXOffset(), (int) hitbox.getY() + calculateAttackYOffset());
             atackEffect.setLocation((int) atackHitbox.getX(), (int) atackHitbox.getY());
+            playSlashSound();
             atackEffectDirection();
             hasReacted = false;
             resetAttackFlagTimer.start();
@@ -253,6 +272,22 @@ public class Warrior extends Entity {
     }
 
     boolean hasReacted = false;
+
+
+    private void playSlashSound(){
+        try {
+            String filePath= "src/Sounds/slash.wav";
+            AudioInputStream audio= AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+            try{
+
+                Clip clip= AudioSystem.getClip();
+                clip.open(audio);
+
+                clip.start();
+            } catch (Exception e){}
+        } catch (Exception e){}
+    }
+
 
     @Override
     public void attacks(Entity e) {

@@ -40,6 +40,7 @@ public class Entity {
         this.y=y;
     }
 
+
     public void update(){}
     public JLabel getEffect(){
         return null;

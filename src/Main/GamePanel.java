@@ -4,12 +4,17 @@ import Characters.*;
 import Menus.GameHud;
 import Tiles.map;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
@@ -53,6 +58,7 @@ public class GamePanel extends JPanel {
         this.setFocusable(true);
         this.requestFocusInWindow();
         loadSkeletons();
+        backgroundMusic();
     }
 
     private void loadSkeletons() {
@@ -104,13 +110,18 @@ public class GamePanel extends JPanel {
             s.attacks(player);
             player.attacks(s);
         }
-        player.attacks(player);
+        if (player instanceof Mage){
+            player.attacks(player);
+        }
+
     }
 
     //Temporary player settings
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
+
+
 
     public static class frameWindowListener extends WindowAdapter {
         JFrame frame;
@@ -135,6 +146,26 @@ public class GamePanel extends JPanel {
                 frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             }
         }
+    }
+
+
+    private void backgroundMusic(){
+        try {
+        String filePath= "src/Sounds/NeonDrops.wav";
+        AudioInputStream audio= AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+        try{
+
+            Clip clip= AudioSystem.getClip();
+            clip.open(audio);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+            FloatControl gainControl= (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            float volumeReduction = -5.0f;
+            gainControl.setValue(volumeReduction);
+
+            clip.start();
+        } catch (Exception e){}
+        } catch (Exception e){}
     }
 
     public ArrayList<Skeleton> getSkeletons() {

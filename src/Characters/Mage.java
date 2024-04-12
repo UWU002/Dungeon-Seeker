@@ -5,8 +5,10 @@ import Main.PlayerInputs;
 import Menus.GameHud;
 import Tiles.map;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.sql.Time;
 
 
@@ -76,6 +78,7 @@ public class Mage extends Entity {
             explosionLabel.setLocation(atackHitbox.x, atackHitbox.y);
             explosionLabel.setIcon(explosion);
             explosionHitbox.setLocation(atackHitbox.x, atackHitbox.y);
+            playExplosionSound();
             atackHitbox.setLocation(-10000, -10000);
             atackEffect.setLocation(-10000, 10000);
             explosionMove=new Timer(450, ev->{
@@ -157,6 +160,7 @@ public class Mage extends Entity {
             shootingDirection= prevDirection;
             atackHitbox.setLocation((int) hitbox.getX() + calculateAttackXOffset(), (int) hitbox.getY() + calculateAttackYOffset());
             atackEffect.setLocation(atackHitbox.x, atackHitbox.y);
+            playFiraballSound();
             hasReacted = false;
             resetAttackFlagTimer.start();
             attackCooldownTimer.start();
@@ -356,6 +360,41 @@ public class Mage extends Entity {
                 hasReacted = true;
             }
         }
+    }
+
+    private void playFiraballSound(){
+        try {
+            String filePath= "src/Sounds/fireball.wav";
+            AudioInputStream audio= AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+            try{
+
+                Clip clip= AudioSystem.getClip();
+                clip.open(audio);
+
+                FloatControl gainControl= (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float volumeReduction = -10.0f;
+                gainControl.setValue(volumeReduction);
+
+                clip.start();
+            } catch (Exception e){}
+        } catch (Exception e){}
+    }
+
+    private void playExplosionSound(){
+        try {
+            String filePath= "src/Sounds/explosion.wav";
+            AudioInputStream audio= AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+            try{
+
+                Clip clip= AudioSystem.getClip();
+                clip.open(audio);
+                FloatControl gainControl= (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float volumeReduction = -15.0f;
+                gainControl.setValue(volumeReduction);
+                clip.start();
+
+            } catch (Exception e){}
+        } catch (Exception e){}
     }
 
     @Override
