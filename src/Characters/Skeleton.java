@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class Skeleton extends Entity {
     private JLabel skeletonLabel, skeletonHealth;
-    private Timer movementTimer, detectionTimer;
+    private Timer movementTimer, refreshAtack;
     private Random r = new Random();
     private final int detectionRange = 7;
     private int check = 0, randomNum = 50;
@@ -36,7 +36,10 @@ public class Skeleton extends Entity {
         loadImages();
         setDefaultValues();
         movementTimerInitialize();
+        hasReactedRefresh();
     }
+
+
 
     public void setDefaultValues() {
         damage = 20;
@@ -46,6 +49,12 @@ public class Skeleton extends Entity {
     }
 
 
+    private void hasReactedRefresh() {
+        refreshAtack= new Timer(3000,  e -> {
+            hasReacted=false;
+            refreshAtack.stop();
+        });
+    }
     private void movementTimerInitialize() {
         movementTimer = new Timer(18, e -> isPlayerInRange());
         movementTimer.start();
@@ -277,6 +286,7 @@ public class Skeleton extends Entity {
                 gh.setHp(player.getHealth() - damage);
                 player.setHealth(player.getHealth() - damage);
                 hasReacted = true;
+                refreshAtack.start();
             }
         } else {
             hasReacted = false;
