@@ -1,6 +1,7 @@
 package Main;
 
 import Characters.*;
+import Items.Sword;
 import Menus.GameHud;
 import Tiles.map;
 
@@ -34,6 +35,9 @@ public class GamePanel extends JPanel {
     map map = new map(this);
     GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
+
+    //Temp Item creation
+    Sword sword= new Sword(this, 100, 70);
 
 
     public void characterSelection(String characterType) {
@@ -79,6 +83,9 @@ public class GamePanel extends JPanel {
             this.setComponentZOrder(s.getSkeletonLabel(), 1);
             this.setComponentZOrder(s.getSkeletonHealth(), 1);
         }
+
+
+        this.setComponentZOrder(sword.getJlabel(), 1);
     }
 
 
@@ -103,6 +110,10 @@ public class GamePanel extends JPanel {
         }
         gh.update();
         checkCollisions();
+
+
+
+        sword.contacts(player);
     }
 
     private void checkCollisions() {
