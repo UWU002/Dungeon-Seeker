@@ -7,13 +7,13 @@ import java.awt.*;
 
 public class GameHud {
     GamePanel gp;
-    private JLabel inventory, healthBar, gold, healthNum, atackAvailable;
+    private JLabel inventory, healthBar, gold, healthNum, atackAvailable, speed, damage;
     private ImageIcon hp0, hp10, hp25, hp50, hp90, hp100, check, cross;
     private int hp, coins = 0, screenHeight = 12 * 48;
 
     public GameHud(GamePanel gp) {
         this.gp = gp;
-        characterHealth();
+        characterStats();
         canAtack();
     }
 
@@ -24,12 +24,30 @@ public class GameHud {
         atackCooldownVisual();
     }
 
-    private void characterHealth() {
-        healthBar = new JLabel();
+    private void characterStats() {
         loadImages();
-        gp.add(healthBar);
-        healthBar.setLocation(gp.tileSize * 17, screenHeight + 20);
-        healthBar.setSize(200, 70);
+        healthBarLable();
+        healthNumLable();
+        statsNumbers();
+        update();
+    }
+
+    private void statsNumbers() {
+        speed = new JLabel();
+        speed.setLocation(650, 565);
+        speed.setSize(100, 100);
+        speed.setForeground(Color.red);
+        speed.setFont(new Font("Arial", Font.BOLD, 15));
+        gp.add(speed);
+        damage = new JLabel();
+        damage.setLocation(650, 585);
+        damage.setSize(100, 100);
+        damage.setForeground(Color.red);
+        damage.setFont(new Font("Arial", Font.BOLD, 15));
+        gp.add(damage);
+    }
+
+    private void healthNumLable() {
         healthNum = new JLabel();
         healthNum.setLocation(905, 550);
         healthNum.setSize(100, 100);
@@ -37,7 +55,13 @@ public class GameHud {
         healthNum.setForeground(Color.red);
         healthNum.setFont(new Font("Arial", Font.BOLD, 20));
         gp.add(healthNum);
-        update();
+    }
+
+    private void healthBarLable() {
+        healthBar = new JLabel();
+        gp.add(healthBar);
+        healthBar.setLocation(gp.tileSize * 17, screenHeight + 20);
+        healthBar.setSize(200, 70);
     }
 
     private void canAtack() {
@@ -69,6 +93,10 @@ public class GameHud {
     }
 
     private void updateLabel() {
+        if (gp.player != null) {
+            speed.setText("Spd: "+gp.player.getSpeed()*10);
+            damage.setText("Atk: "+gp.player.getDamage());
+        }
         healthNum.setText(hp + "hp");
 
         if (hp <= 100 && hp > 90) {
