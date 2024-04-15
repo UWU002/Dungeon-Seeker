@@ -1,6 +1,9 @@
 package Main;
 
 import Characters.*;
+import Items.Item;
+import Items.Mitre;
+import Items.Potion;
 import Items.Sword;
 import Menus.GameHud;
 import Tiles.map;
@@ -17,16 +20,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GamePanel extends JPanel {
 
+    Random r= new Random();
     //Screen Size
     public final int originalTileSize = 16, scale = 3;
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
-    // Skeletons Array
+    //Tutorial Hitboxes
+    Rectangle swordHelp, potionHelp, mitreHelp;
+    // Objects Arrays
     ArrayList<Skeleton> skeletons = new ArrayList<>();
+    ArrayList<Item> items= new ArrayList<>();
 
 
     PlayerInputs pI = new PlayerInputs();
@@ -36,8 +44,11 @@ public class GamePanel extends JPanel {
     GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
 
-    //Temp Item creation
-    Sword sword= new Sword(this, 100, 70);
+    //Tutorial Item creation
+    Sword sword= new Sword(this, 200, 50);
+//  Potion potion= new Potion(this, 250, 50);
+//  Mitre mitre= new Mitre(this, 300, 50);
+
 
 
     public void characterSelection(String characterType) {
@@ -48,7 +59,6 @@ public class GamePanel extends JPanel {
         } else if ("Priest".equalsIgnoreCase(characterType)) {
             player = new Priest(this, pI, map, gh);
         }
-
         zIndexPlacement();
     }
 
@@ -62,7 +72,35 @@ public class GamePanel extends JPanel {
         this.setFocusable(true);
         this.requestFocusInWindow();
         loadSkeletons();
+        loadItems();
         backgroundMusic();
+    }
+
+    private void loadItems() {
+        int rndm;
+        for (int i= 0; i < map.getItemSpawns().length; i++){
+            int x= map.getItemSpawns()[i][0];
+            int y= map.getItemSpawns()[i][1];
+            if (r.nextInt(10) > 3){
+                rndm=r.nextInt(3);
+                switch (rndm){
+                    case 0:
+                        items.add(new Sword(this, x, y));
+                        break;
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                }
+            }
+        }
+        loadTutorialTextBoxes();
+    }
+
+    private void loadTutorialTextBoxes() {
+        sword= new Rectangle(64,64, 200,50);
     }
 
     private void loadSkeletons() {
