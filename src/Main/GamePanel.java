@@ -73,6 +73,7 @@ public class GamePanel extends JPanel {
         this.requestFocusInWindow();
         loadSkeletons();
         loadItems();
+        loadTutorialTextBoxes();
         backgroundMusic();
     }
 
@@ -96,11 +97,12 @@ public class GamePanel extends JPanel {
                 }
             }
         }
-        loadTutorialTextBoxes();
     }
 
     private void loadTutorialTextBoxes() {
-        sword= new Rectangle(64,64, 200,50);
+        swordHelp= new Rectangle(200,50, 64,64);
+        potionHelp= new Rectangle(300,50,64,64);
+        mitreHelp= new Rectangle(400, 50, 64,64);
     }
 
     private void loadSkeletons() {
@@ -121,9 +123,11 @@ public class GamePanel extends JPanel {
             this.setComponentZOrder(s.getSkeletonLabel(), 1);
             this.setComponentZOrder(s.getSkeletonHealth(), 1);
         }
-
-
+        for (Item i: items){
+            this.setComponentZOrder(i.getJlabel(), 1);
+        }
         this.setComponentZOrder(sword.getJlabel(), 1);
+
     }
 
 
@@ -148,10 +152,6 @@ public class GamePanel extends JPanel {
         }
         gh.update();
         checkCollisions();
-
-
-
-        sword.contacts(player);
     }
 
     private void checkCollisions() {
@@ -159,10 +159,13 @@ public class GamePanel extends JPanel {
             s.attacks(player);
             player.attacks(s);
         }
+        for (Item i: items){
+            i.contacts(player);
+        }
+        sword.contacts(player);
         if (player instanceof Mage){
             player.attacks(player);
         }
-
     }
 
     //Temporary player settings

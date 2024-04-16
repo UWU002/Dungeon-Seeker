@@ -18,7 +18,6 @@ public class map {
     private ArrayList<Rectangle> monsterContainers = new ArrayList<>();
     private ArrayList<Rectangle> tps = new ArrayList<>();
     private int level = 0;
-    int playerX=0, playerY=0;
 
     public map(GamePanel gp) {
         this.gp = gp;
@@ -28,7 +27,7 @@ public class map {
 
     private void setItemSpawns(){
         tutorialSetItemSpawns= new int[][]{
-                {200,50},{250,50},{300,50}
+                {200,50},{400,50},{500,50},{600,50}
         };
         level1SetItemSpawns= new int[][]{};
         level2SetItemSpawns= new int[][]{};
@@ -36,7 +35,7 @@ public class map {
 
     private void setMonsterPositions(){
         tutorialZoneMonsters= new int[][]{
-                {500, 50}, {500, 80}
+                {500, 250}, {700, 250}
         };
         level1MC= new int [][]{};
         level2MC= new int [][]{};
