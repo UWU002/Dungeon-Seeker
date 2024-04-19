@@ -27,7 +27,7 @@ public class Sword extends Item {
     }
 
     private void createHitboxRectangle() {
-        hitbox= new Rectangle(image.getX(),image.getY() ,image.getWidth() ,image.getHeight());
+        hitbox= new Rectangle(x+20,y+20 ,16 ,16);
     }
 
     public void contacts(Entity e){
@@ -36,5 +36,5 @@ public class Sword extends Item {
             gp.remove(image);
             hitbox.setLocation(-1000, 1000);
         }
-    };
+    }
 }

@@ -50,7 +50,6 @@ public class Warrior extends Entity {
 
     public void setDefaultValues() {
         health = 100;
-        originalHP=health+10;
         speed = 2;
         damage = 50;
         direction = "idle";
@@ -62,17 +61,6 @@ public class Warrior extends Entity {
         if (!dead) {
             movePlayer();
             updateLabel();
-            takeHalfDamage();
-        }
-    }
-
-    private void takeHalfDamage(){
-        if (health < originalHP){
-            health+=10;
-            originalHP=health;
-        }
-        if (health > originalHP){
-            originalHP=health;
         }
     }
 

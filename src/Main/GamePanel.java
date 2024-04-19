@@ -23,18 +23,19 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GamePanel extends JPanel {
-
-    Random r= new Random();
+    Random r = new Random();
     //Screen Size
     public final int originalTileSize = 16, scale = 3;
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
-    //Tutorial Hitboxes
+    //Item Tutorial
     Rectangle swordHelp, potionHelp, mitreHelp;
+    JLabel tutorial;
+
     // Objects Arrays
     ArrayList<Skeleton> skeletons = new ArrayList<>();
-    ArrayList<Item> items= new ArrayList<>();
+    ArrayList<Item> items = new ArrayList<>();
 
 
     PlayerInputs pI = new PlayerInputs();
@@ -45,10 +46,9 @@ public class GamePanel extends JPanel {
     public Entity player = new Entity(this, pI, map, gh);
 
     //Tutorial Item creation
-    Sword sword= new Sword(this, 200, 50);
-//  Potion potion= new Potion(this, 250, 50);
-//  Mitre mitre= new Mitre(this, 300, 50);
-
+    Sword sword = new Sword(this, 200, 50);
+    Potion potion= new Potion(this, 400, 50);
+    Mitre mitre= new Mitre(this, 600, 50);
 
 
     public void characterSelection(String characterType) {
@@ -74,25 +74,26 @@ public class GamePanel extends JPanel {
         loadSkeletons();
         loadItems();
         loadTutorialTextBoxes();
+        createTutorialLabel();
         backgroundMusic();
     }
 
     private void loadItems() {
         int rndm;
-        for (int i= 0; i < map.getItemSpawns().length; i++){
-            int x= map.getItemSpawns()[i][0];
-            int y= map.getItemSpawns()[i][1];
-            if (r.nextInt(10) > 3){
-                rndm=r.nextInt(3);
-                switch (rndm){
+        for (int i = 0; i < map.getItemSpawns().length; i++) {
+            int x = map.getItemSpawns()[i][0];
+            int y = map.getItemSpawns()[i][1];
+            if (r.nextInt(10) > 3) {
+                rndm = r.nextInt(3);
+                switch (rndm) {
                     case 0:
                         items.add(new Sword(this, x, y));
                         break;
                     case 1:
-
+                        items.add(new Potion(this, x, y));
                         break;
                     case 2:
-
+                        items.add(new Mitre(this, x, y));
                         break;
                 }
             }
@@ -100,9 +101,9 @@ public class GamePanel extends JPanel {
     }
 
     private void loadTutorialTextBoxes() {
-        swordHelp= new Rectangle(200,50, 64,64);
-        potionHelp= new Rectangle(300,50,64,64);
-        mitreHelp= new Rectangle(400, 50, 64,64);
+        swordHelp = new Rectangle(200, 50, 64, 64);
+        potionHelp = new Rectangle(400, 50, 64, 64);
+        mitreHelp = new Rectangle(600, 50, 64, 64);
     }
 
     private void loadSkeletons() {
@@ -123,11 +124,13 @@ public class GamePanel extends JPanel {
             this.setComponentZOrder(s.getSkeletonLabel(), 1);
             this.setComponentZOrder(s.getSkeletonHealth(), 1);
         }
-        for (Item i: items){
-            this.setComponentZOrder(i.getJlabel(), 1);
+        for (Item i : items) {
+            this.setComponentZOrder(i.getJlabel(), 0);
         }
-        this.setComponentZOrder(sword.getJlabel(), 1);
-
+        this.setComponentZOrder(sword.getJlabel(), 0);
+        this.setComponentZOrder(potion.getJlabel(), 0);
+        this.setComponentZOrder(mitre.getJlabel(), 0);
+        this.setComponentZOrder(tutorial, 0);
     }
 
 
@@ -155,24 +158,63 @@ public class GamePanel extends JPanel {
     }
 
     private void checkCollisions() {
+        entityAtacks();
+        itemCollisions();
+        selfInflictedDamage();
+    }
+
+    private void entityAtacks() {
         for (Skeleton s : skeletons) {
             s.attacks(player);
             player.attacks(s);
         }
-        for (Item i: items){
-            i.contacts(player);
-        }
-        sword.contacts(player);
-        if (player instanceof Mage){
+    }
+
+    private void selfInflictedDamage() {
+        if (player instanceof Mage) {
             player.attacks(player);
         }
+    }
+
+    private void itemCollisions() {
+        for (Item i : items) {
+            i.contacts(player);
+        }
+        if (map.getLevel() == 0) {
+            itemTutorials();
+        }
+    }
+
+    private void itemTutorials() {
+        sword.contacts(player);
+        potion.contacts(player);
+        mitre.contacts(player);
+
+        if (swordHelp.intersects(player.getHitbox())){
+            tutorial.setText("The sword will increase the Player's damage by 10");
+            tutorial.setLocation(200, 80);
+        } else if (potionHelp.intersects(player.getHitbox())) {
+            tutorial.setText("The potion will increase the Player's health by 10");
+            tutorial.setLocation(350, 80);
+        } else if (mitreHelp.intersects(player.getHitbox())) {
+            tutorial.setText("The mitre increase the Player's speed by 10");
+            tutorial.setLocation(550, 80);
+        }
+    }
+
+    private void createTutorialLabel() {
+        tutorial= new JLabel();
+        tutorial.setLocation(200, 80);
+        tutorial.setSize(500,50);
+        tutorial.setForeground(Color.WHITE);
+        tutorial.setBackground(Color.GRAY);
+        this.add(tutorial);
     }
 
     //Temporary player settings
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
     }
-
 
 
     public static class frameWindowListener extends WindowAdapter {
@@ -201,23 +243,25 @@ public class GamePanel extends JPanel {
     }
 
 
-    private void backgroundMusic(){
+    private void backgroundMusic() {
         try {
-        String filePath= "src/Sounds/NeonDrops.wav";
-        AudioInputStream audio= AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-        try{
+            String filePath = "src/Sounds/NeonDrops.wav";
+            AudioInputStream audio = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+            try {
 
-            Clip clip= AudioSystem.getClip();
-            clip.open(audio);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audio);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
 
-            FloatControl gainControl= (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            float volumeReduction = -5.0f;
-            gainControl.setValue(volumeReduction);
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                float volumeReduction = -5.0f;
+                gainControl.setValue(volumeReduction);
 
-            clip.start();
-        } catch (Exception e){}
-        } catch (Exception e){}
+                clip.start();
+            } catch (Exception e) {
+            }
+        } catch (Exception e) {
+        }
     }
 
     public ArrayList<Skeleton> getSkeletons() {

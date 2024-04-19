@@ -281,10 +281,14 @@ public class Skeleton extends Entity {
 
     @Override
     public void attacks(Entity player) {
+        int dmgInstance=damage;
         if (this.hitbox.intersects(player.getHitbox())) {
             if (!hasReacted) {
-                gh.setHp(player.getHealth() - damage);
-                player.setHealth(player.getHealth() - damage);
+                if (player instanceof Warrior){
+                    dmgInstance= damage/2;
+                }
+                gh.setHp(player.getHealth() - dmgInstance);
+                player.setHealth(player.getHealth() - dmgInstance);
                 hasReacted = true;
                 refreshAtack.start();
             }

@@ -20,8 +20,15 @@ public class GameHud {
 
     public void update() {
         updateLabel();
+        updateHealth();
         keep0heath();
         atackCooldownVisual();
+    }
+
+    private void updateHealth() {
+        if (gp.player!=null){
+            hp=gp.player.getHealth();
+        }
     }
 
     private void characterStats() {

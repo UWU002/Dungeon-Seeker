@@ -27,7 +27,7 @@ public class map {
 
     private void setItemSpawns(){
         tutorialSetItemSpawns= new int[][]{
-                {200,50},{400,50},{500,50},{600,50}
+
         };
         level1SetItemSpawns= new int[][]{};
         level2SetItemSpawns= new int[][]{};
@@ -180,6 +180,15 @@ public class map {
         tile.setSize(gp.originalTileSize, gp.originalTileSize);
         tile.setLocation(x * gp.originalTileSize, y * gp.originalTileSize);
         gp.add(tile);
+    }
+
+
+    public int getLevel(){
+        return level;
+    }
+
+    public void setLevel(int level){
+        this.level=level;
     }
 
     public ArrayList<Rectangle> getWallHitboxes() {
