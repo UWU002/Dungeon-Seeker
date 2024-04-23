@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class PlayerInputs extends KeyAdapter {
-    public boolean  upPressed, downPressed, leftPressed, rightPressed, atacked;
+    public boolean  upPressed, downPressed, leftPressed, rightPressed, atacked, action;
 
 
     @Override
@@ -18,6 +18,7 @@ public class PlayerInputs extends KeyAdapter {
             case KeyEvent.VK_S, KeyEvent.VK_DOWN -> downPressed=true;
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> rightPressed=true;
             case KeyEvent.VK_J, KeyEvent.VK_Z -> atacked=true;
+            case KeyEvent.VK_E, KeyEvent.VK_X -> action=true;
         }
     }
 

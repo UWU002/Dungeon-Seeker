@@ -46,9 +46,9 @@ public class GamePanel extends JPanel {
     public Entity player = new Entity(this, pI, map, gh);
 
     //Tutorial Item creation
-    Sword sword = new Sword(this, 200, 50);
-    Potion potion= new Potion(this, 400, 50);
-    Mitre mitre= new Mitre(this, 600, 50);
+    Sword sword = new Sword(this, gh,200, 50);
+    Potion potion= new Potion(this, gh,400, 50);
+    Mitre mitre= new Mitre(this, gh,600, 50);
 
 
     public void characterSelection(String characterType) {
@@ -83,17 +83,17 @@ public class GamePanel extends JPanel {
         for (int i = 0; i < map.getItemSpawns().length; i++) {
             int x = map.getItemSpawns()[i][0]*originalTileSize;
             int y = map.getItemSpawns()[i][1]*originalTileSize;
-            if (r.nextInt(10) > 7) {
+            if (r.nextInt(10) > 8) {
                 rndm = r.nextInt(3);
                 switch (rndm) {
                     case 0:
-                        items.add(new Sword(this, x, y));
+                        items.add(new Sword(this, gh ,x, y));
                         break;
                     case 1:
-                        items.add(new Potion(this, x, y));
+                        items.add(new Potion(this,gh ,x, y));
                         break;
                     case 2:
-                        items.add(new Mitre(this, x, y));
+                        items.add(new Mitre(this, gh,x, y));
                         break;
                 }
             }
@@ -101,9 +101,9 @@ public class GamePanel extends JPanel {
     }
 
     private void loadTutorialTextBoxes() {
-        swordHelp = new Rectangle(200, 50, 64, 64);
-        potionHelp = new Rectangle(400, 50, 64, 64);
-        mitreHelp = new Rectangle(600, 50, 64, 64);
+        swordHelp = new Rectangle(200, 50, 64, 120);
+        potionHelp = new Rectangle(400, 50, 64, 120);
+        mitreHelp = new Rectangle(600, 50, 64, 120);
     }
 
     private void loadSkeletons() {
@@ -197,7 +197,7 @@ public class GamePanel extends JPanel {
             tutorial.setText("The potion will increase the Player's health by 10");
             tutorial.setLocation(350, 80);
         } else if (mitreHelp.intersects(player.getHitbox())) {
-            tutorial.setText("The mitre increase the Player's speed by 10");
+            tutorial.setText("The mitre will set the Player's health to the original number");
             tutorial.setLocation(550, 80);
         }
     }
@@ -209,11 +209,6 @@ public class GamePanel extends JPanel {
         tutorial.setForeground(Color.WHITE);
         tutorial.setBackground(Color.GRAY);
         this.add(tutorial);
-    }
-
-    //Temporary player settings
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
     }
 
 

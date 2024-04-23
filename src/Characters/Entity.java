@@ -13,13 +13,13 @@ public class Entity {
     protected PlayerInputs pI;
     protected GameHud gh;
     protected int x=50, y=50;
-    protected int health, damage;
-    protected int speed;
+    protected int health, intialHealth ,damage, speed;
     protected Rectangle hitbox, atackHitbox;
     protected map gameMap;
     protected Timer attackCooldownTimer;
     protected Timer resetAttackFlagTimer;
     protected boolean canAtack=true, dead=false;
+    protected int potionCount=0;
 
     protected ImageIcon up, left, down, right, idle, atackR, atackU, atackD, atackL, die;
     protected String direction = "idle", prevDirection="", prevVerticalDirection="", prevHorizontalDirection="";
@@ -42,6 +42,9 @@ public class Entity {
 
 
     public void update(){}
+    public int getInitialHealth(){
+        return intialHealth;
+    }
     public JLabel getEffect(){
         return null;
     }
@@ -87,6 +90,14 @@ public class Entity {
 
     public boolean getDead(){
         return dead;
+    }
+
+    public int getPotionCount() {
+        return potionCount;
+    }
+
+    public void setPotionCount(int potionCount) {
+        this.potionCount = potionCount;
     }
 
     public int getX(){

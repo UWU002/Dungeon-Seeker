@@ -18,6 +18,7 @@ public class Priest extends  Entity{
 
     public void setDefaultValues() {
         health = 80;
+        intialHealth=health;
         speed = 3;
         damage= 40;
         direction = "idle";

@@ -8,7 +8,6 @@ import Tiles.map;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -23,15 +22,20 @@ public class Warrior extends Entity {
         playerLabel = new JLabel();
         loadImages();
         setDefaultValues();
-        gp.add(playerLabel);
-        playerLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
-        hitbox = new Rectangle(x + 10, y + 10, gp.originalTileSize, gp.originalTileSize);
-        atackHitbox = new Rectangle(x + 10000, y, gp.originalTileSize, gp.originalTileSize);
-        atackEffect = new JLabel(new ImageIcon());
-        gp.add(atackEffect);
-        atackEffect.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
-        gh.setHp(this.health);
+        createPlayerLabelAndHitboxes();
+        createTimers();
+    }
 
+    public void setDefaultValues() {
+        health = 100;
+        intialHealth=health;
+        speed = 2;
+        damage = 50;
+        direction = "idle";
+        updateLabel();
+    }
+
+    private void createTimers() {
         resetAttackFlagTimer = new Timer(700, e -> {
             pI.atacked = false;
             direction = "idle";
@@ -46,20 +50,34 @@ public class Warrior extends Entity {
         });
     }
 
-
-    public void setDefaultValues() {
-        health = 100;
-        speed = 2;
-        damage = 50;
-        direction = "idle";
-        updateLabel();
+    private void createPlayerLabelAndHitboxes() {
+        gp.add(playerLabel);
+        playerLabel.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
+        hitbox = new Rectangle(x + 10, y + 10, gp.originalTileSize, gp.originalTileSize);
+        atackHitbox = new Rectangle(x + 10000, y, gp.originalTileSize, gp.originalTileSize);
+        atackEffect = new JLabel(new ImageIcon());
+        gp.add(atackEffect);
+        atackEffect.setSize(gp.originalTileSize * 2, gp.originalTileSize * 2);
+        gh.setHp(this.health);
     }
+
 
     @Override
     public void update() {
         if (!dead) {
             movePlayer();
+            drinkPotion();
             updateLabel();
+        }
+    }
+
+    public void drinkPotion(){
+        if (pI.action){
+            if (potionCount > 0){
+                potionCount-=1;
+                this.health+=10;
+            }
+            pI.action= false;
         }
     }
 

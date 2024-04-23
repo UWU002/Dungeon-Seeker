@@ -3,13 +3,14 @@ package Items;
 import Characters.Entity;
 import Characters.Skeleton;
 import Main.GamePanel;
+import Menus.GameHud;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Sword extends Item {
-    public Sword(GamePanel gp, int x, int y) {
-        super(gp, x, y);
+    public Sword(GamePanel gp, GameHud gh, int x, int y) {
+        super(gp, gh,x, y);
         createLabel();
         createHitboxRectangle();
         setDefaults();

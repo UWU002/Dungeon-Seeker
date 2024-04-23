@@ -45,6 +45,7 @@ public class Mage extends Entity {
 
     public void setDefaultValues() {
         health = 40;
+        intialHealth=health;
         speed = 2;
         damage = 100;
         direction = "idle";
@@ -113,7 +114,18 @@ public class Mage extends Entity {
     public void update() {
         if (!dead) {
             movePlayer();
+            drinkPotion();
             updateLabel();
+        }
+    }
+
+    public void drinkPotion(){
+        if (pI.action){
+            if (potionCount > 0){
+                potionCount-=1;
+                this.health+=10;
+            }
+            pI.action= false;
         }
     }
 
@@ -396,6 +408,8 @@ public class Mage extends Entity {
             } catch (Exception e){}
         } catch (Exception e){}
     }
+
+
 
     @Override
     public JLabel getLabel() {

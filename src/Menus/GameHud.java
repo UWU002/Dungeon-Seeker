@@ -7,13 +7,14 @@ import java.awt.*;
 
 public class GameHud {
     GamePanel gp;
-    private JLabel inventory, healthBar, gold, healthNum, atackAvailable, speed, damage;
-    private ImageIcon hp0, hp10, hp25, hp50, hp90, hp100, check, cross;
+    private JLabel inventorySlot1,inventorySlot2,inventorySlot3, healthBar, gold, healthNum, atackAvailable, speed, damage;
+    private ImageIcon hp0, hp10, hp25, hp50, hp90, hp100, check, cross, invSlotEmpty, invSlotPotion;
     private int hp, coins = 0, screenHeight = 12 * 48;
 
     public GameHud(GamePanel gp) {
         this.gp = gp;
         characterStats();
+        loadInventory();
         canAtack();
     }
 
@@ -23,11 +24,61 @@ public class GameHud {
         updateHealth();
         keep0heath();
         atackCooldownVisual();
+        updateInventory();
+    }
+
+    private void loadInventory() {
+        inventorySlot1 = new JLabel();
+        loadImages();
+        gp.add(inventorySlot1);
+        inventorySlot1.setLocation(gp.tileSize * 2 , screenHeight + 12);
+        inventorySlot1.setSize(80, 80);
+        inventorySlot1.setIcon(invSlotPotion);
+
+        inventorySlot2 = new JLabel();
+        gp.add(inventorySlot2);
+        inventorySlot2.setLocation(gp.tileSize * 4, screenHeight + 12);
+        inventorySlot2.setSize(80, 80);
+        inventorySlot2.setIcon(invSlotEmpty);
+
+        inventorySlot3 = new JLabel();
+        gp.add(inventorySlot3);
+        inventorySlot3.setLocation(gp.tileSize * 6, screenHeight + 12);
+        inventorySlot3.setSize(80, 80);
+        inventorySlot3.setIcon(invSlotEmpty);
+    }
+
+    private void updateInventory() {
+        if (gp.player != null) {
+            switch (gp.player.getPotionCount()) {
+                case 0:
+                    inventorySlot1.setIcon(invSlotEmpty);
+                    inventorySlot2.setIcon(invSlotEmpty);
+                    inventorySlot3.setIcon(invSlotEmpty);
+                    break;
+                case 1:
+                    inventorySlot1.setIcon(invSlotPotion);
+                    inventorySlot2.setIcon(invSlotEmpty);
+                    inventorySlot3.setIcon(invSlotEmpty);
+                    break;
+                case 2:
+                    inventorySlot1.setIcon(invSlotPotion);
+                    inventorySlot2.setIcon(invSlotPotion);
+                    inventorySlot3.setIcon(invSlotEmpty);
+                    break;
+                case 3:
+                    inventorySlot1.setIcon(invSlotPotion);
+                    inventorySlot2.setIcon(invSlotPotion);
+                    inventorySlot3.setIcon(invSlotPotion);
+                    break;
+
+            }
+        }
     }
 
     private void updateHealth() {
-        if (gp.player!=null){
-            hp=gp.player.getHealth();
+        if (gp.player != null) {
+            hp = gp.player.getHealth();
         }
     }
 
@@ -97,12 +148,14 @@ public class GameHud {
         hp100 = new ImageIcon("src/images/MenuItems/100hpBar.png");
         check = new ImageIcon("src/images/MenuItems/check.png");
         cross = new ImageIcon("src/images/MenuItems/cross.png");
+        invSlotEmpty = new ImageIcon("src/images/MenuItems/invSlotEmpty.png");
+        invSlotPotion = new ImageIcon("src/images/MenuItems/invSlotPotion.png");
     }
 
     private void updateLabel() {
         if (gp.player != null) {
-            speed.setText("Spd: "+gp.player.getSpeed()*10);
-            damage.setText("Atk: "+gp.player.getDamage());
+            speed.setText("Spd: " + gp.player.getSpeed() * 10);
+            damage.setText("Atk: " + gp.player.getDamage());
         }
         healthNum.setText(hp + "hp");
 
