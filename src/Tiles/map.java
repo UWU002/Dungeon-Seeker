@@ -27,7 +27,9 @@ public class map {
 
     private void setItemSpawns(){
         tutorialSetItemSpawns= new int[][]{
-
+                {13,30}, {40,17}, {22,14}, {39,30}, {3,25}, {50,15}, {9,20}, {25,13}, {25,19},
+                {2,23}, {46,26}, {29,22}, {56,15}, {46,19}, {24,22}, {24,28}, {55,12}, {18,27},
+                {5,14}, {27,20}, {44,15}, {27,29}, {48,18}
         };
         level1SetItemSpawns= new int[][]{};
         level2SetItemSpawns= new int[][]{};

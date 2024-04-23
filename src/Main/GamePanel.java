@@ -81,9 +81,9 @@ public class GamePanel extends JPanel {
     private void loadItems() {
         int rndm;
         for (int i = 0; i < map.getItemSpawns().length; i++) {
-            int x = map.getItemSpawns()[i][0];
-            int y = map.getItemSpawns()[i][1];
-            if (r.nextInt(10) > 3) {
+            int x = map.getItemSpawns()[i][0]*originalTileSize;
+            int y = map.getItemSpawns()[i][1]*originalTileSize;
+            if (r.nextInt(10) > 7) {
                 rndm = r.nextInt(3);
                 switch (rndm) {
                     case 0:

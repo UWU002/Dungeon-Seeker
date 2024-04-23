@@ -17,7 +17,6 @@ import java.io.File;
 public class Warrior extends Entity {
     private JLabel playerLabel, atackEffect;
     private ImageIcon effectR, effectU, effectL, effectD;
-    private int originalHP;
 
     public Warrior(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
         super(gp, pI, gameMap, gh);
