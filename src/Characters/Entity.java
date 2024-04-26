@@ -84,10 +84,6 @@ public class Entity {
         return speed;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
     public boolean getDead(){
         return dead;
     }

@@ -25,6 +25,9 @@ public class Item {
     public void update(){}
     public JLabel getJlabel(){return image;}
     public void contacts(Entity e){}
-
+    public void removeFromGame(){
+        gp.remove(image);
+        hitbox.setLocation(1000, 1000);
+    }
 
 }

@@ -14,6 +14,7 @@ public class map {
     private int[][] tutorialZoneMonsters, level1Monsters, level2Monsters;
     private int[][] tutorialSetItemSpawns, level1SetItemSpawns, level2SetItemSpawns;
     private Rectangle wallHitbox,monsterContainer, tp;
+    private ArrayList<JLabel> tileLabels = new ArrayList<>();
     private ArrayList<Rectangle> wallHitboxes = new ArrayList<>();
     private ArrayList<Rectangle> monsterContainers = new ArrayList<>();
     private ArrayList<Rectangle> tps = new ArrayList<>();
@@ -37,10 +38,13 @@ public class map {
 
     private void setMonsterPositions(){
         tutorialZoneMonsters= new int[][]{
-                {500, 250}, {700, 250}
+                {55, 15}, {44, 17}, {13, 19}, {8, 12},
+                {31, 23}, {22, 25}, {8, 25}
         };
-        level1MC= new int [][]{};
-        level2MC= new int [][]{};
+        level1Monsters= new int [][]{
+
+        };
+        level2Monsters= new int [][]{};
     }
 
     private void setMonsterContainersPositions(){
@@ -182,6 +186,7 @@ public class map {
         tile.setSize(gp.originalTileSize, gp.originalTileSize);
         tile.setLocation(x * gp.originalTileSize, y * gp.originalTileSize);
         gp.add(tile);
+        tileLabels.add(tile);
     }
 
 
@@ -229,5 +234,18 @@ public class map {
                 return level2Monsters;
         }
         return null;
+    }
+
+
+    public void nextLevel(){
+        wallHitboxes.clear();
+        monsterContainers.clear();
+        tps.clear();
+        level= 1;
+        for (JLabel j : tileLabels){
+            gp.remove(j);
+        }
+        tileLabels.clear();
+        generateMap();
     }
 }

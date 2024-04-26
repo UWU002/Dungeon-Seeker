@@ -28,7 +28,7 @@ public class Warrior extends Entity {
 
     public void setDefaultValues() {
         health = 100;
-        intialHealth=health;
+        intialHealth = health;
         speed = 2;
         damage = 50;
         direction = "idle";
@@ -71,13 +71,13 @@ public class Warrior extends Entity {
         }
     }
 
-    public void drinkPotion(){
-        if (pI.action){
-            if (potionCount > 0){
-                potionCount-=1;
-                this.health+=10;
+    public void drinkPotion() {
+        if (pI.action) {
+            if (potionCount > 0) {
+                potionCount -= 1;
+                this.health += 10;
             }
-            pI.action= false;
+            pI.action = false;
         }
     }
 
@@ -279,27 +279,31 @@ public class Warrior extends Entity {
     boolean hasReacted = false;
 
 
-    private void playSlashSound(){
+    private void playSlashSound() {
         try {
-            String filePath= "src/Sounds/slash.wav";
-            AudioInputStream audio= AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
-            try{
+            String filePath = "src/Sounds/slash.wav";
+            AudioInputStream audio = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
+            try {
 
-                Clip clip= AudioSystem.getClip();
+                Clip clip = AudioSystem.getClip();
                 clip.open(audio);
 
                 clip.start();
-            } catch (Exception e){}
-        } catch (Exception e){}
+            } catch (Exception e) {
+            }
+        } catch (Exception e) {
+        }
     }
 
 
     @Override
     public void attacks(Entity e) {
-        if (this.atackHitbox.intersects(e.getHitbox())) {
-            if (!hasReacted) {
-                e.setHealth(e.getHealth() - damage);
-                hasReacted = true;
+        if (!e.getDead()) {
+            if (this.atackHitbox.intersects(e.getHitbox())) {
+                if (!hasReacted) {
+                    e.setHealth(e.getHealth() - damage);
+                    hasReacted = true;
+                }
             }
         }
     }

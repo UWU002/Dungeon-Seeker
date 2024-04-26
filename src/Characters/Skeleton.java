@@ -40,7 +40,6 @@ public class Skeleton extends Entity {
     }
 
 
-
     public void setDefaultValues() {
         damage = 20;
         health = 100;
@@ -50,11 +49,12 @@ public class Skeleton extends Entity {
 
 
     private void hasReactedRefresh() {
-        refreshAtack= new Timer(3000,  e -> {
-            hasReacted=false;
+        refreshAtack = new Timer(3000, e -> {
+            hasReacted = false;
             refreshAtack.stop();
         });
     }
+
     private void movementTimerInitialize() {
         movementTimer = new Timer(18, e -> isPlayerInRange());
         movementTimer.start();
@@ -185,6 +185,9 @@ public class Skeleton extends Entity {
             skeletonHealth.setLocation(-1000, -1000);
             skeletonLabel.setLocation(-1000, -1000);
             hitbox.setLocation(-1000, -1000);
+            gp.remove(skeletonHealth);
+            gp.remove(skeletonLabel);
+            gp.getSkeletons().remove(this);
         }).start();
     }
 
@@ -281,19 +284,21 @@ public class Skeleton extends Entity {
 
     @Override
     public void attacks(Entity player) {
-        int dmgInstance=damage;
-        if (this.hitbox.intersects(player.getHitbox())) {
-            if (!hasReacted) {
-                if (player instanceof Warrior){
-                    dmgInstance= damage/2;
+        int dmgInstance = damage;
+        if (!death) {
+            if (this.hitbox.intersects(player.getHitbox())) {
+                if (!hasReacted) {
+                    if (player instanceof Warrior) {
+                        dmgInstance = damage / 2;
+                    }
+                    gh.setHp(player.getHealth() - dmgInstance);
+                    player.setHealth(player.getHealth() - dmgInstance);
+                    hasReacted = true;
+                    refreshAtack.start();
                 }
-                gh.setHp(player.getHealth() - dmgInstance);
-                player.setHealth(player.getHealth() - dmgInstance);
-                hasReacted = true;
-                refreshAtack.start();
+            } else {
+                hasReacted = false;
             }
-        } else {
-            hasReacted = false;
         }
     }
 
@@ -326,6 +331,10 @@ public class Skeleton extends Entity {
     }
 
 
+    public boolean getDead() {
+        return death;
+    }
+
     public JLabel getSkeletonLabel() {
         return skeletonLabel;
     }
@@ -334,5 +343,11 @@ public class Skeleton extends Entity {
         return skeletonHealth;
     }
 
+    public void removeFromGame() {
+        death = true;
+        gp.remove(skeletonLabel);
+        gp.remove(skeletonHealth);
+        hitbox.setLocation(10000, 9);
+    }
 
 }

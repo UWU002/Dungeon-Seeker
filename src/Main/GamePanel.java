@@ -7,7 +7,6 @@ import Items.Potion;
 import Items.Sword;
 import Menus.GameHud;
 import Tiles.map;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -30,7 +29,7 @@ public class GamePanel extends JPanel {
     public final int screenTileWidth = 22, screenTileHeight = 12;
     final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
     //Item Tutorial
-    Rectangle swordHelp, potionHelp, mitreHelp;
+    Rectangle swordHelp, potionHelp, mitreHelp, tutorialHelpMove;
     JLabel tutorial;
 
     // Objects Arrays
@@ -46,9 +45,9 @@ public class GamePanel extends JPanel {
     public Entity player = new Entity(this, pI, map, gh);
 
     //Tutorial Item creation
-    Sword sword = new Sword(this, gh,200, 50);
-    Potion potion= new Potion(this, gh,400, 50);
-    Mitre mitre= new Mitre(this, gh,600, 50);
+    Sword tutorialSword = new Sword(this, gh,200, 50);
+    Potion tutorialPotion = new Potion(this, gh,400, 50);
+    Mitre tutorialMitre = new Mitre(this, gh,600, 50);
 
 
     public void characterSelection(String characterType) {
@@ -62,6 +61,7 @@ public class GamePanel extends JPanel {
         zIndexPlacement();
     }
 
+    private Timer testLevel;
     public GamePanel() {
         this.setPreferredSize(new Dimension(boardWidth, boardHeight + 100));
         this.setBackground(Color.gray);
@@ -76,6 +76,25 @@ public class GamePanel extends JPanel {
         loadTutorialTextBoxes();
         createTutorialLabel();
         backgroundMusic();
+        addTutorialItemsToArray();
+
+         testLevel= new Timer(60000, e -> {
+            for (Skeleton s : skeletons){
+                s.removeFromGame();
+            }
+            for (Item i : items){
+                i.removeFromGame();
+            }
+            map.nextLevel();
+            testLevel.stop();
+        });
+        testLevel.start();
+    }
+
+    private void addTutorialItemsToArray() {
+        items.add(tutorialSword);
+        items.add(tutorialPotion);
+        items.add(tutorialMitre);
     }
 
     private void loadItems() {
@@ -104,12 +123,13 @@ public class GamePanel extends JPanel {
         swordHelp = new Rectangle(200, 50, 64, 120);
         potionHelp = new Rectangle(400, 50, 64, 120);
         mitreHelp = new Rectangle(600, 50, 64, 120);
+        tutorialHelpMove= new Rectangle(700,  50, 64, 120);
     }
 
     private void loadSkeletons() {
         for (int i = 0; i < map.getSkeletons().length; i++) {
-            int x = map.getSkeletons()[i][0];
-            int y = map.getSkeletons()[i][1];
+            int x = map.getSkeletons()[i][0]*originalTileSize;
+            int y = map.getSkeletons()[i][1]*originalTileSize;
             skeletons.add(new Skeleton(this, pI, map, gh, x, y));
         }
     }
@@ -127,9 +147,9 @@ public class GamePanel extends JPanel {
         for (Item i : items) {
             this.setComponentZOrder(i.getJlabel(), 0);
         }
-        this.setComponentZOrder(sword.getJlabel(), 0);
-        this.setComponentZOrder(potion.getJlabel(), 0);
-        this.setComponentZOrder(mitre.getJlabel(), 0);
+        this.setComponentZOrder(tutorialSword.getJlabel(), 0);
+        this.setComponentZOrder(tutorialPotion.getJlabel(), 0);
+        this.setComponentZOrder(tutorialMitre.getJlabel(), 0);
         this.setComponentZOrder(tutorial, 0);
     }
 
@@ -186,9 +206,9 @@ public class GamePanel extends JPanel {
     }
 
     private void itemTutorials() {
-        sword.contacts(player);
-        potion.contacts(player);
-        mitre.contacts(player);
+        tutorialSword.contacts(player);
+        tutorialPotion.contacts(player);
+        tutorialMitre.contacts(player);
 
         if (swordHelp.intersects(player.getHitbox())){
             tutorial.setText("The sword will increase the Player's damage by 10");
@@ -199,6 +219,8 @@ public class GamePanel extends JPanel {
         } else if (mitreHelp.intersects(player.getHitbox())) {
             tutorial.setText("The mitre will set the Player's health to the original number");
             tutorial.setLocation(550, 80);
+        } else if (tutorialHelpMove.intersects(player.getHitbox())) {
+            this.remove(tutorial);
         }
     }
 
@@ -224,7 +246,7 @@ public class GamePanel extends JPanel {
             super.windowClosing(e);
 
             int conf = JOptionPane.showConfirmDialog(null,
-                    "Unsaved data will be lost, Are you Sure?",
+                    "If you dont finish the run it will be lost, Are you Sure?",
                     "Confirmation",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
@@ -263,9 +285,9 @@ public class GamePanel extends JPanel {
         return skeletons;
     }
 
+
     private long lastTimeCheck = System.nanoTime();
     private int frameCount = 0;
-
     private void updateFPS() {
         long currentTime = System.nanoTime();
         frameCount++;
@@ -278,3 +300,15 @@ public class GamePanel extends JPanel {
         }
     }
 }
+//Delete Level
+//        testLevel= new Timer(1000, e -> {
+//            for (Skeleton s : skeletons){
+//                s.removeFromGame();
+//            }
+//            for (Item i : items){
+//                i.removeFromGame();
+//            }
+//            map.nextLevel();
+//            testLevel.stop();
+//        });
+//        testLevel.start();
