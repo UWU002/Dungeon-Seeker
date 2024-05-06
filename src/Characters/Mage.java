@@ -3,13 +3,12 @@ package Characters;
 import Main.GamePanel;
 import Main.PlayerInputs;
 import Menus.GameHud;
-import Tiles.map;
+import Tiles.Map;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.sql.Time;
 
 
 public class Mage extends Entity {
@@ -21,7 +20,7 @@ public class Mage extends Entity {
     private int fSPX, fSPY;
 
 
-    public Mage(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
+    public Mage(GamePanel gp, PlayerInputs pI, Map gameMap, GameHud gh) {
         super(gp, pI, gameMap, gh);
         playerLabel = new JLabel();
         loadImages();

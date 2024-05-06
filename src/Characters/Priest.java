@@ -3,11 +3,11 @@ package Characters;
 import Main.GamePanel;
 import Main.PlayerInputs;
 import Menus.GameHud;
-import Tiles.map;
+import Tiles.Map;
 
 public class Priest extends  Entity{
     //Bigger Range than Warrior but smaller than mage
-    public Priest(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
+    public Priest(GamePanel gp, PlayerInputs pI, Map gameMap, GameHud gh) {
         super(gp, pI,gameMap, gh);
 
 

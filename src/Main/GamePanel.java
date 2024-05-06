@@ -6,7 +6,8 @@ import Items.Mitre;
 import Items.Potion;
 import Items.Sword;
 import Menus.GameHud;
-import Tiles.map;
+import Tiles.Map;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -27,27 +28,27 @@ public class GamePanel extends JPanel {
     public final int originalTileSize = 16, scale = 3;
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
-    final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
+    private final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
     //Item Tutorial
-    Rectangle swordHelp, potionHelp, mitreHelp, tutorialHelpMove;
-    JLabel tutorial;
+    private Rectangle swordHelp, potionHelp, mitreHelp, tutorialHelpMove;
+    private JLabel tutorial;
 
     // Objects Arrays
-    ArrayList<Skeleton> skeletons = new ArrayList<>();
-    ArrayList<Item> items = new ArrayList<>();
+    private ArrayList<Skeleton> skeletons = new ArrayList<>();
+    private ArrayList<Item> items = new ArrayList<>();
 
 
     PlayerInputs pI = new PlayerInputs();
     private Timer gameTimer;
 
-    map map = new map(this);
+    Map map = new Map(this);
     GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
 
     //Tutorial Item creation
-    Sword tutorialSword = new Sword(this, gh,200, 50);
-    Potion tutorialPotion = new Potion(this, gh,400, 50);
-    Mitre tutorialMitre = new Mitre(this, gh,600, 50);
+    Sword tutorialSword = new Sword(this, gh, 200, 50);
+    Potion tutorialPotion = new Potion(this, gh, 400, 50);
+    Mitre tutorialMitre = new Mitre(this, gh, 600, 50);
 
 
     public void characterSelection(String characterType) {
@@ -61,7 +62,10 @@ public class GamePanel extends JPanel {
         zIndexPlacement();
     }
 
+
+    // TEST
     private Timer testLevel;
+
     public GamePanel() {
         this.setPreferredSize(new Dimension(boardWidth, boardHeight + 100));
         this.setBackground(Color.gray);
@@ -73,22 +77,24 @@ public class GamePanel extends JPanel {
         this.requestFocusInWindow();
         loadSkeletons();
         loadItems();
+        createNextLevelTimer();
         loadTutorialTextBoxes();
         createTutorialLabel();
         backgroundMusic();
         addTutorialItemsToArray();
+    }
 
-         testLevel= new Timer(60000, e -> {
-            for (Skeleton s : skeletons){
+    private void createNextLevelTimer() {
+        testLevel = new Timer(100, e -> {
+            for (Skeleton s : skeletons) {
                 s.removeFromGame();
             }
-            for (Item i : items){
+            for (Item i : items) {
                 i.removeFromGame();
             }
             map.nextLevel();
             testLevel.stop();
         });
-        testLevel.start();
     }
 
     private void addTutorialItemsToArray() {
@@ -100,19 +106,19 @@ public class GamePanel extends JPanel {
     private void loadItems() {
         int rndm;
         for (int i = 0; i < map.getItemSpawns().length; i++) {
-            int x = map.getItemSpawns()[i][0]*originalTileSize;
-            int y = map.getItemSpawns()[i][1]*originalTileSize;
+            int x = map.getItemSpawns()[i][0] * originalTileSize;
+            int y = map.getItemSpawns()[i][1] * originalTileSize;
             if (r.nextInt(10) > 8) {
                 rndm = r.nextInt(3);
                 switch (rndm) {
                     case 0:
-                        items.add(new Sword(this, gh ,x, y));
+                        items.add(new Sword(this, gh, x, y));
                         break;
                     case 1:
-                        items.add(new Potion(this,gh ,x, y));
+                        items.add(new Potion(this, gh, x, y));
                         break;
                     case 2:
-                        items.add(new Mitre(this, gh,x, y));
+                        items.add(new Mitre(this, gh, x, y));
                         break;
                 }
             }
@@ -123,13 +129,13 @@ public class GamePanel extends JPanel {
         swordHelp = new Rectangle(200, 50, 64, 120);
         potionHelp = new Rectangle(400, 50, 64, 120);
         mitreHelp = new Rectangle(600, 50, 64, 120);
-        tutorialHelpMove= new Rectangle(700,  50, 64, 120);
+        tutorialHelpMove = new Rectangle(700, 50, 64, 120);
     }
 
     private void loadSkeletons() {
         for (int i = 0; i < map.getSkeletons().length; i++) {
-            int x = map.getSkeletons()[i][0]*originalTileSize;
-            int y = map.getSkeletons()[i][1]*originalTileSize;
+            int x = map.getSkeletons()[i][0] * originalTileSize;
+            int y = map.getSkeletons()[i][1] * originalTileSize;
             skeletons.add(new Skeleton(this, pI, map, gh, x, y));
         }
     }
@@ -161,7 +167,6 @@ public class GamePanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 updateGame();
                 repaint();
-                updateFPS();
             }
         });
         gameTimer.start();
@@ -181,6 +186,15 @@ public class GamePanel extends JPanel {
         entityAtacks();
         itemCollisions();
         selfInflictedDamage();
+        enterTpTiles();
+    }
+
+    private void enterTpTiles() {
+        for (Rectangle r : map.getTps()) {
+            if (player.getHitbox().intersects(r)) {
+                testLevel.start();
+            }
+        }
     }
 
     private void entityAtacks() {
@@ -210,7 +224,7 @@ public class GamePanel extends JPanel {
         tutorialPotion.contacts(player);
         tutorialMitre.contacts(player);
 
-        if (swordHelp.intersects(player.getHitbox())){
+        if (swordHelp.intersects(player.getHitbox())) {
             tutorial.setText("The sword will increase the Player's damage by 10");
             tutorial.setLocation(200, 80);
         } else if (potionHelp.intersects(player.getHitbox())) {
@@ -225,9 +239,9 @@ public class GamePanel extends JPanel {
     }
 
     private void createTutorialLabel() {
-        tutorial= new JLabel();
+        tutorial = new JLabel();
         tutorial.setLocation(200, 80);
-        tutorial.setSize(500,50);
+        tutorial.setSize(500, 50);
         tutorial.setForeground(Color.WHITE);
         tutorial.setBackground(Color.GRAY);
         this.add(tutorial);
@@ -284,31 +298,4 @@ public class GamePanel extends JPanel {
     public ArrayList<Skeleton> getSkeletons() {
         return skeletons;
     }
-
-
-    private long lastTimeCheck = System.nanoTime();
-    private int frameCount = 0;
-    private void updateFPS() {
-        long currentTime = System.nanoTime();
-        frameCount++;
-
-        // If more than a second has passed, print the FPS and reset
-        if (currentTime - lastTimeCheck >= 1000000000) { // If one second has passed
-            System.out.println("FPS: " + frameCount);
-            frameCount = 0; // Reset the frame count
-            lastTimeCheck = currentTime; // Reset the last time check
-        }
-    }
 }
-//Delete Level
-//        testLevel= new Timer(1000, e -> {
-//            for (Skeleton s : skeletons){
-//                s.removeFromGame();
-//            }
-//            for (Item i : items){
-//                i.removeFromGame();
-//            }
-//            map.nextLevel();
-//            testLevel.stop();
-//        });
-//        testLevel.start();

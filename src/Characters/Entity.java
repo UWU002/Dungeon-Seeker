@@ -3,7 +3,7 @@ package Characters;
 import Main.GamePanel;
 import Main.PlayerInputs;
 import Menus.GameHud;
-import Tiles.map;
+import Tiles.Map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,10 +12,10 @@ public class Entity {
     protected GamePanel gp;
     protected PlayerInputs pI;
     protected GameHud gh;
-    protected int x=50, y=50;
+    protected int x=100, y=100;
     protected int health, intialHealth ,damage, speed;
     protected Rectangle hitbox, atackHitbox;
-    protected map gameMap;
+    protected Map gameMap;
     protected Timer attackCooldownTimer;
     protected Timer resetAttackFlagTimer;
     protected boolean canAtack=true, dead=false;
@@ -25,13 +25,13 @@ public class Entity {
     protected String direction = "idle", prevDirection="", prevVerticalDirection="", prevHorizontalDirection="";
 
 
-    public Entity(GamePanel gp, PlayerInputs pI ,map gameMap, GameHud gh){
+    public Entity(GamePanel gp, PlayerInputs pI , Map gameMap, GameHud gh){
         this.gp=gp;
         this.pI=pI;
         this.gh=gh;
         this.gameMap=gameMap;
     }
-    public Entity(GamePanel gp, PlayerInputs pI,map gameMap,GameHud gh, int x, int y){
+    public Entity(GamePanel gp, PlayerInputs pI, Map gameMap, GameHud gh, int x, int y){
         this.gp=gp;
         this.pI=pI;
         this.gameMap=gameMap;
@@ -101,5 +101,13 @@ public class Entity {
     }
     public int getY(){
         return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }

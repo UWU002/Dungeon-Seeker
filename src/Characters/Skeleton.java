@@ -3,7 +3,7 @@ package Characters;
 import Main.GamePanel;
 import Main.PlayerInputs;
 import Menus.GameHud;
-import Tiles.map;
+import Tiles.Map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,7 @@ public class Skeleton extends Entity {
     boolean death = false;
 
 
-    public Skeleton(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh, int x, int y) {
+    public Skeleton(GamePanel gp, PlayerInputs pI, Map gameMap, GameHud gh, int x, int y) {
         super(gp, pI, gameMap, gh, x, y);
         skeletonLabel = new JLabel();
         gp.add(skeletonLabel);

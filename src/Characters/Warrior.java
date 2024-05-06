@@ -3,7 +3,7 @@ package Characters;
 import Main.GamePanel;
 import Main.PlayerInputs;
 import Menus.GameHud;
-import Tiles.map;
+import Tiles.Map;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -17,7 +17,7 @@ public class Warrior extends Entity {
     private JLabel playerLabel, atackEffect;
     private ImageIcon effectR, effectU, effectL, effectD;
 
-    public Warrior(GamePanel gp, PlayerInputs pI, map gameMap, GameHud gh) {
+    public Warrior(GamePanel gp, PlayerInputs pI, Map gameMap, GameHud gh) {
         super(gp, pI, gameMap, gh);
         playerLabel = new JLabel();
         loadImages();
