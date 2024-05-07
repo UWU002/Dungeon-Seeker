@@ -255,28 +255,32 @@ public class Skeleton extends Entity {
 
 
     private void updateLabel() {
-        skeletonHealth.setText(health + "");
-        switch (direction) {
-            case "up":
-                skeletonLabel.setIcon(up);
-                break;
-            case "down":
-                skeletonLabel.setIcon(down);
-                break;
-            case "right":
-                skeletonLabel.setIcon(right);
-                break;
-            case "left":
-                skeletonLabel.setIcon(left);
-                break;
-            default:
-                skeletonLabel.setIcon(idle);
-        }
-        skeletonLabel.setLocation(x, y);
-        if (health <= 0) {
-            death = true;
-            movementTimer.stop();
-            deathAnimation();
+        if (!death) {
+            skeletonHealth.setText(health + "");
+            switch (direction) {
+                case "up":
+                    skeletonLabel.setIcon(up);
+                    break;
+                case "down":
+                    skeletonLabel.setIcon(down);
+                    break;
+                case "right":
+                    skeletonLabel.setIcon(right);
+                    break;
+                case "left":
+                    skeletonLabel.setIcon(left);
+                    break;
+                default:
+                    skeletonLabel.setIcon(idle);
+            }
+            skeletonLabel.setLocation(x, y);
+            if (health <= 0) {
+                gp.player.setGold(gp.player.getGold() + 10);
+                System.out.println("potato");
+                death = true;
+                movementTimer.stop();
+                deathAnimation();
+            }
         }
     }
 

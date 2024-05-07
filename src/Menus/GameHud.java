@@ -92,17 +92,23 @@ public class GameHud {
 
     private void statsNumbers() {
         speed = new JLabel();
-        speed.setLocation(650, 565);
+        speed.setLocation(650, 560);
         speed.setSize(100, 100);
         speed.setForeground(Color.red);
         speed.setFont(new Font("Arial", Font.BOLD, 15));
         gp.add(speed);
         damage = new JLabel();
-        damage.setLocation(650, 585);
+        damage.setLocation(650, 590);
         damage.setSize(100, 100);
         damage.setForeground(Color.red);
         damage.setFont(new Font("Arial", Font.BOLD, 15));
         gp.add(damage);
+        gold = new JLabel();
+        gold.setLocation(710, 575);
+        gold.setSize(100, 100);
+        gold.setForeground(Color.YELLOW);
+        gold.setFont(new Font("Arial", Font.BOLD, 15));
+        gp.add(gold);
     }
 
     private void healthNumLable() {
@@ -155,7 +161,8 @@ public class GameHud {
     private void updateLabel() {
         if (gp.player != null) {
             speed.setText("Spd: " + gp.player.getSpeed() * 10);
-            damage.setText("Atk: " + gp.player.getDamage());
+            damage.setText("Atk : " + gp.player.getDamage());
+            gold.setText("Gold: "+ gp.player.getGold());
         }
         healthNum.setText(hp + "hp");
 

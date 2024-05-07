@@ -13,7 +13,7 @@ public class Entity {
     protected PlayerInputs pI;
     protected GameHud gh;
     protected int x=100, y=100;
-    protected int health, intialHealth ,damage, speed;
+    protected int health, intialHealth ,damage, speed, gold;
     protected Rectangle hitbox, atackHitbox;
     protected Map gameMap;
     protected Timer attackCooldownTimer;
@@ -94,6 +94,14 @@ public class Entity {
 
     public void setPotionCount(int potionCount) {
         this.potionCount = potionCount;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void setGold(int gold) {
+        this.gold = gold;
     }
 
     public int getX(){

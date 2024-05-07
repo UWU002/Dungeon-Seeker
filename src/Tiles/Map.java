@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Map {
     private GamePanel gp;
+    private JLabel exit;
     private int[][] tutorialZoneWalls, level1Walls, level2Walls;
     private int[][] tutorialZoneTP, level1TP, level2TP;
     private int[][] tutorialZoneMC, level1MC, level2MC;
@@ -18,7 +19,8 @@ public class Map {
     private ArrayList<Rectangle> wallHitboxes = new ArrayList<>();
     private ArrayList<Rectangle> monsterContainers = new ArrayList<>();
     private ArrayList<Rectangle> tps = new ArrayList<>();
-    private int level = 0;
+    private ArrayList<Rectangle> exitBlocks= new ArrayList<>();
+    private int level = 0, lastLevel=1;
 
     public Map(GamePanel gp) {
         this.gp = gp;
@@ -113,7 +115,7 @@ public class Map {
                 {2, 13}, {2, 12}, {2, 11}, {2, 10}, {2, 9}, {2, 8}, {2, 7}, {2, 6}, {2, 5}, {2, 4}, {2, 3},
 
 
-                {29, 13}, {30, 13}, {31, 13}, {32, 13}, {33, 13}, {34, 13},
+                {29, 13},{30, 13}, {31, 13}, {32, 13}, {33, 13}, {34, 13},
                 {29, 14}, {29, 15}, {29, 16}, {29, 17}, {29, 18},
                 {34, 14}, {34, 15}, {34, 16}, {34, 17}, {34, 18},
                 {29, 19}, {30, 19}, {33, 19}, {34, 19},
@@ -152,6 +154,25 @@ public class Map {
                     placeMonsterContainer(i, j);
                 }
             }
+        }
+        if (level==lastLevel){
+            createExit();
+        }
+    }
+
+
+    // Exit locations: {30,16},{31,16},{32,16},{33,16},
+    private void createExit() {
+        JLabel exit= new JLabel();
+        ImageIcon exitIcon= new ImageIcon("src/images/MenuItems/exit.png");
+        exit.setSize(64,64);
+        exit.setIcon(exitIcon);
+        exit.setLocation(481,236);
+        gp.add(exit);
+        gp.setComponentZOrder(exit, 0);
+        for (int i = 30; i < 33; i++) {
+            Rectangle exitHitbox= new Rectangle(i*gp.originalTileSize,16*gp.originalTileSize,16 ,16 );
+            exitBlocks.add(exitHitbox);
         }
     }
 
@@ -227,6 +248,9 @@ public class Map {
         tileLabels.add(tile);
     }
 
+    public ArrayList<Rectangle> getExitBlocks() {
+        return exitBlocks;
+    }
 
     public int getLevel() {
         return level;
@@ -244,6 +268,9 @@ public class Map {
         return tps;
     }
 
+    public JLabel getExit() {
+        return exit;
+    }
 
     public int[][] getItemSpawns() {
         switch (level) {

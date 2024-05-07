@@ -29,6 +29,7 @@ public class GamePanel extends JPanel {
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
     private final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
+    private boolean exited= false;
     //Item Tutorial
     private Rectangle swordHelp, potionHelp, mitreHelp, tutorialHelpMove;
     private JLabel tutorial;
@@ -187,6 +188,16 @@ public class GamePanel extends JPanel {
         itemCollisions();
         selfInflictedDamage();
         enterTpTiles();
+        enterExitTile();
+    }
+
+    private void enterExitTile() {
+        for (Rectangle r : map.getExitBlocks()) {
+            if (player.getHitbox().intersects(r) && !exited) {
+                exited=true;
+               /// End game
+            }
+        }
     }
 
     private void enterTpTiles() {
