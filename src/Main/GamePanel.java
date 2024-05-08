@@ -29,7 +29,6 @@ public class GamePanel extends JPanel {
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
     public final int screenTileWidth = 22, screenTileHeight = 12;
     private final int boardWidth = tileSize * screenTileWidth, boardHeight = tileSize * screenTileHeight; // 1056px x 576px
-    private boolean exited= false;
     //Item Tutorial
     private Rectangle swordHelp, potionHelp, mitreHelp, tutorialHelpMove;
     private JLabel tutorial;
@@ -38,10 +37,11 @@ public class GamePanel extends JPanel {
     private ArrayList<Skeleton> skeletons = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
 
-
+    //Game Necessities
+    private Timer nextLevelTimer;
+    private boolean exited = false;
     PlayerInputs pI = new PlayerInputs();
     private Timer gameTimer;
-
     Map map = new Map(this);
     GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
@@ -63,10 +63,6 @@ public class GamePanel extends JPanel {
         zIndexPlacement();
     }
 
-
-    // TEST
-    private Timer testLevel;
-
     public GamePanel() {
         this.setPreferredSize(new Dimension(boardWidth, boardHeight + 100));
         this.setBackground(Color.gray);
@@ -86,7 +82,7 @@ public class GamePanel extends JPanel {
     }
 
     private void createNextLevelTimer() {
-        testLevel = new Timer(100, e -> {
+        nextLevelTimer = new Timer(100, e -> {
             for (Skeleton s : skeletons) {
                 s.removeFromGame();
             }
@@ -94,7 +90,7 @@ public class GamePanel extends JPanel {
                 i.removeFromGame();
             }
             map.nextLevel();
-            testLevel.stop();
+            nextLevelTimer.stop();
         });
     }
 
@@ -109,7 +105,7 @@ public class GamePanel extends JPanel {
         for (int i = 0; i < map.getItemSpawns().length; i++) {
             int x = map.getItemSpawns()[i][0] * originalTileSize;
             int y = map.getItemSpawns()[i][1] * originalTileSize;
-            if (r.nextInt(10) > 8) {
+            if (r.nextInt(10) > 7) {
                 rndm = r.nextInt(3);
                 switch (rndm) {
                     case 0:
@@ -181,6 +177,7 @@ public class GamePanel extends JPanel {
         }
         gh.update();
         checkCollisions();
+        checkForDeath();
     }
 
     private void checkCollisions() {
@@ -194,16 +191,57 @@ public class GamePanel extends JPanel {
     private void enterExitTile() {
         for (Rectangle r : map.getExitBlocks()) {
             if (player.getHitbox().intersects(r) && !exited) {
-                exited=true;
-               /// End game
+                exited = true;
+                /// End game
             }
         }
+    }
+
+    private void checkForDeath() {
+        if (player.getHealth() <= 0) {
+            JLabel death = new JLabel();
+            death.setSize(500, 500);
+            death.setLocation(280, 10);
+            ImageIcon deathIcon = new ImageIcon("src/images/MenuItems/GameOver.png");
+            death.setIcon(deathIcon);
+            this.add(death);
+            this.setComponentZOrder(death, 0);
+            //Restart Game Here
+            gameTimer.stop();
+            cleanup();
+            SwingUtilities.invokeLater(() -> {
+                JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
+                currentFrame.dispose();
+                openLeaderBoard();
+            });
+        }
+    }
+
+    private void cleanup() {
+        clip.stop();
+        clip.close();
+        for (Skeleton s : skeletons){
+            s.setDead(true);
+        }
+        removeKeyListener(pI);
+    }
+
+    private void openLeaderBoard() {
+        //Here I will open the leaderboard instead of the Main Menu
+//        JFrame menuFrame = new JFrame("Dungeon Seeker");
+//        menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        menuFrame.setResizable(false);
+//        MenuScreen menuScreen = new MenuScreen();
+//        menuFrame.setContentPane(menuScreen);
+//        menuFrame.pack();
+//        menuFrame.setVisible(true);
+//        menuFrame.setLocationRelativeTo(null);
     }
 
     private void enterTpTiles() {
         for (Rectangle r : map.getTps()) {
             if (player.getHitbox().intersects(r)) {
-                testLevel.start();
+                nextLevelTimer.start();
             }
         }
     }
@@ -284,14 +322,13 @@ public class GamePanel extends JPanel {
         }
     }
 
-
+    private Clip clip;
     private void backgroundMusic() {
         try {
             String filePath = "src/Sounds/NeonDrops.wav";
             AudioInputStream audio = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
             try {
-
-                Clip clip = AudioSystem.getClip();
+                clip = AudioSystem.getClip();
                 clip.open(audio);
                 clip.loop(Clip.LOOP_CONTINUOUSLY);
 

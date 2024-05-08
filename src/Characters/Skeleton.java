@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class Skeleton extends Entity {
     private JLabel skeletonLabel, skeletonHealth;
-    private Timer movementTimer, refreshAtack;
+    private Timer movementTimer, refreshAtack, deathTimer;
     private Random r = new Random();
     private final int detectionRange = 7;
     private int check = 0, randomNum = 50;
@@ -181,14 +181,16 @@ public class Skeleton extends Entity {
     private void deathAnimation() {
         skeletonLabel.setIcon(die);
         skeletonHealth.setText("");
-        new Timer(700, e -> {
+         deathTimer=new Timer(700, e -> {
             skeletonHealth.setLocation(-1000, -1000);
             skeletonLabel.setLocation(-1000, -1000);
             hitbox.setLocation(-1000, -1000);
             gp.remove(skeletonHealth);
             gp.remove(skeletonLabel);
             gp.getSkeletons().remove(this);
-        }).start();
+            deathTimer.stop();
+        });
+        deathTimer.start();
     }
 
     private void move() {
@@ -276,7 +278,6 @@ public class Skeleton extends Entity {
             skeletonLabel.setLocation(x, y);
             if (health <= 0) {
                 gp.player.setGold(gp.player.getGold() + 10);
-                System.out.println("potato");
                 death = true;
                 movementTimer.stop();
                 deathAnimation();
@@ -337,6 +338,10 @@ public class Skeleton extends Entity {
 
     public boolean getDead() {
         return death;
+    }
+
+    public void setDead(boolean death) {
+        this.death = death;
     }
 
     public JLabel getSkeletonLabel() {

@@ -45,7 +45,7 @@ public class Mage extends Entity {
     public void setDefaultValues() {
         health = 40;
         intialHealth=health;
-        speed = 2;
+        speed = 3;
         damage = 100;
         direction = "idle";
         updateLabel();
