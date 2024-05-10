@@ -48,9 +48,7 @@ public class Map {
                 {31, 23}, {8, 25}
         };
         level1Monsters = new int[][]{
-                {30,5}, {56,6},
-                {56,20},{56,28},
-                {7,15},{15,30}
+                {30,5},{56,6},{56,28},{15,30}
         };
         level2Monsters = new int[][]{};
     }
@@ -306,7 +304,6 @@ public class Map {
 
 
     public void nextLevel() {
-        level++;
         switch (level) {
             case 1:
                 gp.player.setX(50);
@@ -323,5 +320,9 @@ public class Map {
         }
         tileLabels.clear();
         generateMap();
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

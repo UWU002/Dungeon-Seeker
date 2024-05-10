@@ -43,7 +43,7 @@ public class Mage extends Entity {
     }
 
     public void setDefaultValues() {
-        health = 40;
+        health = 50;
         intialHealth=health;
         speed = 3;
         damage = 100;

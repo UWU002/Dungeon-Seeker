@@ -181,7 +181,7 @@ public class Skeleton extends Entity {
     private void deathAnimation() {
         skeletonLabel.setIcon(die);
         skeletonHealth.setText("");
-         deathTimer=new Timer(700, e -> {
+        deathTimer = new Timer(700, e -> {
             skeletonHealth.setLocation(-1000, -1000);
             skeletonLabel.setLocation(-1000, -1000);
             hitbox.setLocation(-1000, -1000);
@@ -310,29 +310,32 @@ public class Skeleton extends Entity {
 
     // Bresenhams Line algorithm
     private List<Point> lineToPlayer(int x0, int y0, int x1, int y1) {
-        List<Point> line = new ArrayList<>();
+        if (!death) {
+            List<Point> line = new ArrayList<>();
 
-        int dx = Math.abs(x1 - x0);
-        int dy = -Math.abs(y1 - y0);
-        int sx = x0 < x1 ? 1 : -1;
-        int sy = y0 < y1 ? 1 : -1;
-        int err = dx + dy, e2; /* error value e_xy */
+            int dx = Math.abs(x1 - x0);
+            int dy = -Math.abs(y1 - y0);
+            int sx = x0 < x1 ? 1 : -1;
+            int sy = y0 < y1 ? 1 : -1;
+            int err = dx + dy, e2; /* error value e_xy */
 
-        while (true) {
-            line.add(new Point(x0, y0));
-            if (x0 == x1 && y0 == y1) break;
-            e2 = 2 * err;
-            if (e2 >= dy) { /* e_xy+e_x > 0 */
-                err += dy;
-                x0 += sx;
+            while (true) {
+                line.add(new Point(x0, y0));
+                if (x0 == x1 && y0 == y1) break;
+                e2 = 2 * err;
+                if (e2 >= dy) { /* e_xy+e_x > 0 */
+                    err += dy;
+                    x0 += sx;
+                }
+                if (e2 <= dx) { /* e_xy+e_y < 0 */
+                    err += dx;
+                    y0 += sy;
+                }
             }
-            if (e2 <= dx) { /* e_xy+e_y < 0 */
-                err += dx;
-                y0 += sy;
-            }
+
+            return line;
         }
-
-        return line;
+        return null;
     }
 
 

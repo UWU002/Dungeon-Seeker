@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GamePanel extends JPanel {
-    Random r = new Random();
+    private Random r = new Random();
     //Screen Size
     public final int originalTileSize = 16, scale = 3;
     public final int tileSize = originalTileSize * scale; //48 x 48 screen
@@ -40,16 +40,16 @@ public class GamePanel extends JPanel {
     //Game Necessities
     private Timer nextLevelTimer;
     private boolean exited = false;
-    PlayerInputs pI = new PlayerInputs();
+    private PlayerInputs pI = new PlayerInputs();
     private Timer gameTimer;
-    Map map = new Map(this);
-    GameHud gh = new GameHud(this);
+    private Map map = new Map(this);
+    private GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
 
     //Tutorial Item creation
-    Sword tutorialSword = new Sword(this, gh, 200, 50);
-    Potion tutorialPotion = new Potion(this, gh, 400, 50);
-    Mitre tutorialMitre = new Mitre(this, gh, 600, 50);
+    private Sword tutorialSword = new Sword(this, gh, 200, 50);
+    private Potion tutorialPotion = new Potion(this, gh, 400, 50);
+    private Mitre tutorialMitre = new Mitre(this, gh, 600, 50);
 
 
     public void characterSelection(String characterType) {
@@ -89,6 +89,9 @@ public class GamePanel extends JPanel {
             for (Item i : items) {
                 i.removeFromGame();
             }
+            map.setLevel(map.getLevel() + 1);
+            loadSkeletons();
+            loadItems();
             map.nextLevel();
             nextLevelTimer.stop();
         });
@@ -138,14 +141,14 @@ public class GamePanel extends JPanel {
     }
 
     private void zIndexPlacement() {
-        this.setComponentZOrder(player.getLabel(), 1);
-        this.setComponentZOrder(player.getEffect(), 1);
+        this.setComponentZOrder(player.getLabel(), 0);
+        this.setComponentZOrder(player.getEffect(), 0);
         if (player.getEffect2() != null) {
-            this.setComponentZOrder(player.getEffect2(), 1);
+            this.setComponentZOrder(player.getEffect2(), 0);
         }
         for (Skeleton s : skeletons) {
-            this.setComponentZOrder(s.getSkeletonLabel(), 1);
-            this.setComponentZOrder(s.getSkeletonHealth(), 1);
+            this.setComponentZOrder(s.getSkeletonLabel(), 0);
+            this.setComponentZOrder(s.getSkeletonHealth(), 0);
         }
         for (Item i : items) {
             this.setComponentZOrder(i.getJlabel(), 0);
@@ -192,10 +195,14 @@ public class GamePanel extends JPanel {
         for (Rectangle r : map.getExitBlocks()) {
             if (player.getHitbox().intersects(r) && !exited) {
                 exited = true;
-                /// End game
+                saveData();
+//                endGame();
+                //Temporary End Game
+                System.exit(1);
             }
         }
     }
+
 
     private void checkForDeath() {
         if (player.getHealth() <= 0) {
@@ -206,28 +213,34 @@ public class GamePanel extends JPanel {
             death.setIcon(deathIcon);
             this.add(death);
             this.setComponentZOrder(death, 0);
-            //Restart Game Here
-            gameTimer.stop();
-            cleanup();
-            SwingUtilities.invokeLater(() -> {
-                JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
-                currentFrame.dispose();
-                openLeaderBoard();
-            });
+            saveData();
+//            endGame();
+            //Temporary End Game
+            System.exit(1);
         }
+    }
+
+    private void endGame() {
+        gameTimer.stop();
+        cleanup();
+        SwingUtilities.invokeLater(() -> {
+            JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
+            currentFrame.dispose();
+            openLeaderBoard();
+        });
     }
 
     private void cleanup() {
         clip.stop();
         clip.close();
-        for (Skeleton s : skeletons){
+        for (Skeleton s : skeletons) {
             s.setDead(true);
         }
         removeKeyListener(pI);
     }
 
     private void openLeaderBoard() {
-        //Here I will open the leaderboard instead of the Main Menu
+        //Here I will open the leaderboard so the player can see this score and they're top 5.
 //        JFrame menuFrame = new JFrame("Dungeon Seeker");
 //        menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        menuFrame.setResizable(false);
@@ -237,6 +250,11 @@ public class GamePanel extends JPanel {
 //        menuFrame.setVisible(true);
 //        menuFrame.setLocationRelativeTo(null);
     }
+
+    private void saveData() {
+        //Here I save the data to the Database
+    }
+
 
     private void enterTpTiles() {
         for (Rectangle r : map.getTps()) {
@@ -323,6 +341,7 @@ public class GamePanel extends JPanel {
     }
 
     private Clip clip;
+
     private void backgroundMusic() {
         try {
             String filePath = "src/Sounds/NeonDrops.wav";

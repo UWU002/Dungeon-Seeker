@@ -27,7 +27,7 @@ public class Warrior extends Entity {
     }
 
     public void setDefaultValues() {
-        health = 10;
+        health = 100;
         intialHealth = health;
         speed = 2;
         damage = 50;
