@@ -19,6 +19,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -37,19 +41,33 @@ public class GamePanel extends JPanel {
     private ArrayList<Skeleton> skeletons = new ArrayList<>();
     private ArrayList<Item> items = new ArrayList<>();
 
+
     //Game Necessities
+    private Boolean death = false;
+    private String character;
     private Timer nextLevelTimer;
     private boolean exited = false;
     private PlayerInputs pI = new PlayerInputs();
     private Timer gameTimer;
+    private Timer elapsedTimeTimer;
+    private int elapsedTimeInSeconds;
+
     private Map map = new Map(this);
     private GameHud gh = new GameHud(this);
     public Entity player = new Entity(this, pI, map, gh);
+
 
     //Tutorial Item creation
     private Sword tutorialSword = new Sword(this, gh, 200, 50);
     private Potion tutorialPotion = new Potion(this, gh, 400, 50);
     private Mitre tutorialMitre = new Mitre(this, gh, 600, 50);
+
+    // Player name
+    private String playerName;
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
 
 
     public void characterSelection(String characterType) {
@@ -60,6 +78,7 @@ public class GamePanel extends JPanel {
         } else if ("Priest".equalsIgnoreCase(characterType)) {
             player = new Priest(this, pI, map, gh);
         }
+        character = characterType;
         zIndexPlacement();
     }
 
@@ -80,6 +99,7 @@ public class GamePanel extends JPanel {
         backgroundMusic();
         addTutorialItemsToArray();
     }
+
 
     private void createNextLevelTimer() {
         nextLevelTimer = new Timer(100, e -> {
@@ -170,6 +190,14 @@ public class GamePanel extends JPanel {
             }
         });
         gameTimer.start();
+        elapsedTimeInSeconds = 0;
+        elapsedTimeTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                elapsedTimeInSeconds++;
+            }
+        });
+        elapsedTimeTimer.start();
     }
 
 
@@ -196,7 +224,7 @@ public class GamePanel extends JPanel {
             if (player.getHitbox().intersects(r) && !exited) {
                 exited = true;
                 saveData();
-//                endGame();
+                endGame();
                 //Temporary End Game
                 System.exit(1);
             }
@@ -206,6 +234,7 @@ public class GamePanel extends JPanel {
 
     private void checkForDeath() {
         if (player.getHealth() <= 0) {
+            death = true;
             JLabel death = new JLabel();
             death.setSize(500, 500);
             death.setLocation(280, 10);
@@ -214,7 +243,7 @@ public class GamePanel extends JPanel {
             this.add(death);
             this.setComponentZOrder(death, 0);
             saveData();
-//            endGame();
+            endGame();
             //Temporary End Game
             System.exit(1);
         }
@@ -222,12 +251,13 @@ public class GamePanel extends JPanel {
 
     private void endGame() {
         gameTimer.stop();
+        elapsedTimeTimer.stop();
         cleanup();
-        SwingUtilities.invokeLater(() -> {
-            JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
-            currentFrame.dispose();
-            openLeaderBoard();
-        });
+//        SwingUtilities.invokeLater(() -> {
+//            JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
+//            currentFrame.dispose();
+//            openLeaderBoard();
+//        });
     }
 
     private void cleanup() {
@@ -252,7 +282,38 @@ public class GamePanel extends JPanel {
     }
 
     private void saveData() {
-        //Here I save the data to the Database
+        String db_url = "jdbc:mysql://localhost:3306/DungeonSeeker";
+        String user = "root";
+        String paswd = "Mysql";
+        String insertQry = "insert into Leaderboard (name, playerType, coins, hp, time, totalScore) values (?,?,?,?,?,?)"; //Select statement
+        try {
+            Connection con = DriverManager.getConnection(db_url, user, paswd); //Conecting to existing database
+            PreparedStatement ps = con.prepareStatement(insertQry);
+            ps.setString(1, playerName);       //set Types have follow DB columne order
+            ps.setString(2, character);
+            ps.setInt(3, player.getGold());
+            ps.setInt(4, player.getHealth());
+            ps.setInt(5, elapsedTimeInSeconds);
+            ps.setInt(6, setTotalScore());
+            int addRows = ps.executeUpdate();
+            if (addRows > 0) {
+                System.out.println("Inserted");
+            }
+            ps.close();
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Conexion Failed");
+        }
+
+    }
+
+    private int setTotalScore() {
+        int totalScore;
+        totalScore= player.getGold()+player.getHealth()-(elapsedTimeInSeconds/2);
+        if (!death){
+            totalScore+=100;
+        }
+        return totalScore;
     }
 
 

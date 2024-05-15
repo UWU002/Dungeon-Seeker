@@ -7,6 +7,8 @@ import java.awt.*;
 public class MenuScreen extends JPanel {
     private JPanel buttonPanel;
     private JPanel contentPanel;
+    private JTextField playerNameField;
+
 
     public MenuScreen() {
         setPreferredSize(new Dimension(1056, 576));
@@ -25,6 +27,17 @@ public class MenuScreen extends JPanel {
         contentPanel = new JPanel(new CardLayout());
         contentPanel.setBackground(Color.BLACK);
 
+        JLabel nameLabel = new JLabel("Player Name:");
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonPanel.add(nameLabel);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        playerNameField = new JTextField();
+        playerNameField.setMaximumSize(new Dimension(200, 30));
+        playerNameField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonPanel.add(playerNameField);
+        buttonPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         createButtons();
 
@@ -99,11 +112,17 @@ public class MenuScreen extends JPanel {
 
 
         confirm.addActionListener(e -> {JFrame frame = new JFrame("MainS");
+            String playerName = playerNameField.getText().trim();
+            if (playerName.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter a player name", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             frame.setLayout(null);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setResizable(false);
             GamePanel gamePanel= new GamePanel();
             gamePanel.characterSelection(title.trim());
+            gamePanel.setPlayerName(playerName);
             gamePanel.startGame();
             frame.setContentPane(gamePanel);
             frame.pack();

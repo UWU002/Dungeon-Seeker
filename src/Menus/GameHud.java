@@ -9,7 +9,7 @@ public class GameHud {
     GamePanel gp;
     private JLabel inventorySlot1,inventorySlot2,inventorySlot3, healthBar, gold, healthNum, atackAvailable, speed, damage;
     private ImageIcon hp0, hp10, hp25, hp50, hp90, hp100, check, cross, invSlotEmpty, invSlotPotion;
-    private int hp, coins = 0, screenHeight = 12 * 48;
+    private int hp, screenHeight = 12 * 48;
 
     public GameHud(GamePanel gp) {
         this.gp = gp;
