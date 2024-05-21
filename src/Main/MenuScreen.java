@@ -111,7 +111,8 @@ public class MenuScreen extends JPanel {
         panel.add(confirm);
 
 
-        confirm.addActionListener(e -> {JFrame frame = new JFrame("MainS");
+        confirm.addActionListener(e -> {
+            JFrame frame = new JFrame("MainS");
             String playerName = playerNameField.getText().trim();
             if (playerName.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Please enter a player name", "Error", JOptionPane.ERROR_MESSAGE);

@@ -225,9 +225,17 @@ public class GamePanel extends JPanel {
                 exited = true;
                 saveData();
                 endGame();
-                //Temporary End Game
-                System.exit(1);
+                closeWindow();
+                openLeaderBoard();
             }
+        }
+    }
+
+    private void closeWindow() {
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window instanceof JFrame) {
+            JFrame frame = (JFrame) window;
+            frame.dispose();
         }
     }
 
@@ -244,8 +252,8 @@ public class GamePanel extends JPanel {
             this.setComponentZOrder(death, 0);
             saveData();
             endGame();
-            //Temporary End Game
-            System.exit(1);
+            closeWindow();
+            openLeaderBoard();
         }
     }
 
@@ -253,11 +261,6 @@ public class GamePanel extends JPanel {
         gameTimer.stop();
         elapsedTimeTimer.stop();
         cleanup();
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame currentFrame = (JFrame) SwingUtilities.getRoot(this);
-//            currentFrame.dispose();
-//            openLeaderBoard();
-//        });
     }
 
     private void cleanup() {
@@ -270,15 +273,16 @@ public class GamePanel extends JPanel {
     }
 
     private void openLeaderBoard() {
-        //Here I will open the leaderboard so the player can see this score and they're top 5.
-//        JFrame menuFrame = new JFrame("Dungeon Seeker");
-//        menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        menuFrame.setResizable(false);
-//        MenuScreen menuScreen = new MenuScreen();
-//        menuFrame.setContentPane(menuScreen);
-//        menuFrame.pack();
-//        menuFrame.setVisible(true);
-//        menuFrame.setLocationRelativeTo(null);
+        JFrame frame = new JFrame("Leaderboard");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+
+        LeaderboardScreen leaderboardPanel = new LeaderboardScreen();
+        frame.setContentPane(leaderboardPanel);
+
+        frame.pack();
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
     }
 
     private void saveData() {
