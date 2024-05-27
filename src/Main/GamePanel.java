@@ -25,6 +25,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class GamePanel extends JPanel {
     private Random r = new Random();
@@ -51,6 +53,7 @@ public class GamePanel extends JPanel {
     private Timer gameTimer;
     private Timer elapsedTimeTimer;
     private int elapsedTimeInSeconds;
+
 
     private Map map = new Map(this);
     private GameHud gh = new GameHud(this);
@@ -239,6 +242,7 @@ public class GamePanel extends JPanel {
         }
     }
 
+    boolean fkThis = true;
 
     private void checkForDeath() {
         if (player.getHealth() <= 0) {
@@ -254,6 +258,7 @@ public class GamePanel extends JPanel {
             endGame();
             closeWindow();
             openLeaderBoard();
+
         }
     }
 
@@ -313,9 +318,9 @@ public class GamePanel extends JPanel {
 
     private int setTotalScore() {
         int totalScore;
-        totalScore= player.getGold()+player.getHealth()-(elapsedTimeInSeconds/2);
-        if (!death){
-            totalScore+=100;
+        totalScore = player.getGold() + player.getHealth() - (elapsedTimeInSeconds / 2);
+        if (!death) {
+            totalScore += 100;
         }
         return totalScore;
     }

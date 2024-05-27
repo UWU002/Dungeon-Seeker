@@ -49,7 +49,7 @@ public class Skeleton extends Entity {
 
 
     private void hasReactedRefresh() {
-        refreshAtack = new Timer(3000, e -> {
+        refreshAtack = new Timer(1000, e -> {
             hasReacted = false;
             refreshAtack.stop();
         });

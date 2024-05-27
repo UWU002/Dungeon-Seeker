@@ -82,12 +82,6 @@ public class LeaderboardScreen extends JPanel {
         } catch (Exception e) {
             System.out.println("Conexion Failed2");
         }
-
-
-        for (LeaderboardKey key : leaderboardMap.keySet()) {
-            LeaderboardEntries entry = leaderboardMap.get(key);
-            System.out.println(entry);
-        }
     }
 }
 
